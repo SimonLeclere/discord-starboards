@@ -10,6 +10,15 @@ Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allow
 -   ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, etc...)
 -   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll
 
+## Description
+
+A starboard is a channel gathering the best messages from a server.
+To make a message appear in the starboard, just react to it with a star ⭐ !
+The star counter of the last 100 messages is updated with each reaction.
+
+Example : A message from the official Discord.JS Server
+
+![](images/djsServerMsg.png)
 
 ## Installation
 
