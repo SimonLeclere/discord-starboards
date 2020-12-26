@@ -1,0 +1,17 @@
+{
+  "name": "discord-starboards",
+  "version": "1.0.0",
+  "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js ",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.16.0"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  }
+}
