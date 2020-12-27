@@ -7,6 +7,7 @@ Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allow
 -   ⏱️ Easy to use! Create and delete your starboards and the module takes care of the rest!
 -   🔄 Automatic restart after bot crash!
 -   📁 Support for all databases! (default is json)
+-   🌐 Support for multiple starboards per server, and even per channels with a different emoji and different options!
 -   ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, etc...)
 -   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll
 
