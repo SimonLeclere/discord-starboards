@@ -53,6 +53,9 @@ client.login('SUP3R_S3CR3T_T0K3N');
 Parameters: 
 -   **client**: the discord client (your discord bot instance)
 -   **options.storage**: A file path to choose where to store the starboards (or false if you use your own database)
+-   **options.messages.selfstar**: The message sent when a user stars his own message. Has no effect for starboards with the `selfstar` option disabled.
+-   **options.messages.starbot**: The message sent when a user stars a bot's message. Has no effect for starboards with the `starBotMsg` option disabled.
+-   **options.messages.emptyMsg**: The message sent when a user stars a message that has no exploitable content for the starboard (embeds for example).
 
 After that, the module will automatically retrieve already existing starboards and start waiting for reactions.
 

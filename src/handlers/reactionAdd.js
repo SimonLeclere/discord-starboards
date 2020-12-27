@@ -12,8 +12,8 @@ module.exports = async (manager, emoji, message, user) => {
 
 	if(emoji !== data.options.emoji || user.bot) return;
 
-	if (message.author.id === user.id && !data.options.selfStar) return message.channel.send(`${user}, you cannot star your own messages.`);
-	if (message.author.bot && !data.options.starBotMsg) return message.channel.send(`${user}, you cannot star bot messages.`);
+	if (message.author.id === user.id && !data.options.selfStar) return message.channel.send(manager.options.messages.selfStar);
+	if (message.author.bot && !data.options.starBotMsg) return message.channel.send(manager.options.messages.starbot);
 
 	manager.emit('starboardReactionAdd', emoji, message, user);
 
@@ -44,7 +44,7 @@ module.exports = async (manager, emoji, message, user) => {
 	if (!stars) {
 
 		const image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
-		if (image === '' && message.cleanContent.length < 1) return message.channel.send(`${user}, you cannot star an empty message.`);
+		if (image === '' && message.cleanContent.length < 1) return message.channel.send(manager.options.messages.emptyMsg);
 
 		const content = message.cleanContent.length > 2000 ? message.cleanContent.slice(0, 2000) + '\n...' : message.cleanContent;
 

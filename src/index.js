@@ -50,6 +50,11 @@ class StarboardsManager extends EventEmitter {
          */
 		this.options = {
 			storage: typeof options.storage === 'boolean' || typeof options.storage === 'string' ? options.storage : './starboards.json',
+			messages: {
+				selfstar: options.messages && options.messages.selfStar ? options.messages.selfstar : 'You cannot star your own messages.',
+				starbot: options.messages && options.messages.starbot ? options.messages.starbot : 'You cannot star bot messages.',
+				emptyMsg: options.messages && options.messages.emptyMsg ? options.messages.emptyMsg : 'You cannot star an empty message.',
+			},
 		};
 
 		this._init();
