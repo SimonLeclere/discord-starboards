@@ -38,7 +38,14 @@ const client = new Discord.Client();
 const StarboardsManager = require('discord-starboards');
 
 // Initialise it
-const manager = new StarboardsManager(client);
+const manager = new StarboardsManager(client, {
+    storage: './starboards.json',
+    messages: {
+        selfstar: 'You cannot star your own messages.',
+        starbot: 'You cannot star messages from a bot.',
+        emptyMsg: 'You cannot star an empty message.',
+    }
+});
 
 // We now have a starboardsManager property to access the manager everywhere!
 client.starboardsManager = manager;
