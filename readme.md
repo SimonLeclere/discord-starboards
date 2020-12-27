@@ -81,11 +81,12 @@ client.on('message', (message) => {
 });
 ```
 
--   **options.emoji**: The emoji to react with in order to get the message into the starboard
--   **options.starBotMsg**: Whether or not the messages from bots can be starred
--   **options.selfStar**: Whether users can star their own messages or not
--   **options.attachments**: Whether images can be starred or not
--   **options.threshold**: The number of reactions it takes before a message enters the starboard
+-   **options.emoji**: The emoji to react with in order to get the message into the starboard. The default emoji is `⭐`.
+-   **options.starBotMsg**: Whether or not the messages from bots can be starred. Default value is true.
+-   **options.selfStar**: Whether users can star their own messages or not. Default value is true.
+-   **options.attachments**: Whether images can be starred or not. Default value is true.
+-   **options.threshold**: The number of reactions it takes before a message enters the starboard. By default it is 0.
+-   **options.color**: A string representing the color of the embed. The default value is `#f1c40f` (Yellow).
 
 
 ### Fetch starboards

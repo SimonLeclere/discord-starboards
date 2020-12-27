@@ -90,6 +90,7 @@ class StarboardsManager extends EventEmitter {
 			starBotMsg: typeof options.starBotMsg === 'boolean' ? options.starBotMsg : this.defaultsOptions.starBotMsg,
 			selfStar: typeof options.selfStar === 'boolean' ? options.selfStar : this.defaultsOptions.selfStar,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
+			color: options && options.color ? options.color : this.defaultsOptions.color,
 		};
 	}
 

@@ -49,7 +49,7 @@ module.exports = async (manager, emoji, message, user) => {
 		const content = message.cleanContent.length > 2000 ? message.cleanContent.slice(0, 2000) + '\n...' : message.cleanContent;
 
 		const starEmbed = new MessageEmbed()
-			.setColor(15844367)
+			.setColor(data.options.color)
 			.setDescription(content)
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp(new Date())
