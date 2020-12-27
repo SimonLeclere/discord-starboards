@@ -163,7 +163,7 @@ class StarboardsManager extends EventEmitter {
 				}
 				else {
 					console.log(storageContent, starboards);
-					throw new SyntaxError('The storage file is not properly formatted (giveaways is not an array).');
+					throw new SyntaxError('The storage file is not properly formatted (starboards is not an array).');
 				}
 			}
 			catch (e) {

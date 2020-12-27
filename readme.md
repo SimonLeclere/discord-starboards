@@ -38,7 +38,7 @@ const client = new Discord.Client();
 const StarboardsManager = require('discord-starboards');
 
 // Initialise it
-const manager = new starboardsManager(client);
+const manager = new StarboardsManager(client);
 
 // We now have a starboardsManager property to access the manager everywhere!
 client.starboardsManager = manager;
@@ -98,7 +98,7 @@ client.on('message', (message) => {
     const command = args.shift().toLowerCase();
 
     if (command === 'delete') {
-        manager.delete(message.channel);
+        client.starboardsManager.delete(message.channel);
         message.channel.send(`The ${message.channel} channel is no longer a starboard!`);
     }
 });
@@ -108,7 +108,7 @@ When you use the delete function, the starboard data is deleted from the databas
 
 ## Custom database
 
-You can use your custom database to save starboards, instead of the json files (the "database" by default for discord-starboards). For this, you will need to extend the `starboardsManager` class, and replace some methods with your custom ones. There are 4 methods you will need to replace:
+You can use your custom database to save starboards, instead of the json files (the "database" by default for discord-starboards). For this, you will need to extend the `StarboardsManager` class, and replace some methods with your custom ones. There are 4 methods you will need to replace:
 
 -   `getAllStarboards`: this method returns an array of stored starboards.
 -   `saveStarboard`: this method stores a new starboard in the database.
@@ -126,8 +126,8 @@ const client = new Discord.Client();
 const db = require('quick.db');
 if (!db.get('starboards')) db.set('starboards', []);
 
-const { starboardsManager } = require('discord-starboards');
-const starboardsManagerCustomDb = class extends starboardsManager {
+const StarboardsManager = require('discord-starboards');
+const StarboardsManagerCustomDb = class extends StarboardsManager {
     // This function is called when the manager needs to get all the starboards stored in the database.
     async getAllStarboards() {
         // Get all the starboards in the database
@@ -155,7 +155,7 @@ const starboardsManagerCustomDb = class extends starboardsManager {
 };
 
 // Create a new instance of your new class
-const manager = new starboardsManagerCustomDb(client, {
+const manager = new StarboardsManagerCustomDb(client, {
     storage: false, // Important - use false instead of a storage path
 });
 // We now have a starboardsManager property to access the manager everywhere!
