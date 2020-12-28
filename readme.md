@@ -115,6 +115,32 @@ client.on('message', (message) => {
 
 When you use the delete function, the starboard data is deleted from the database.
 
+### Get the leaderboard of a server
+
+The `Starboard` class has a `leaderboard()` method which allows to return an array containing the 10 most starred messages of a starboard among the last 100 of the channel. The returned messages have a new `stars` property which contains the number of stars in the message.
+
+```js
+client.on('message', (message) => {
+    const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+
+    if (command === 'leaderboard') {
+        const starboard = manager.starboards.find(s => s.guildID === message.guild.id && s.options.emoji === '⭐')
+        if(!starboard) return message.channel.send('No starboard found.');
+
+        const lb = await starboard.leaderboard();
+        const content = lb.map((m, i) => `**${i+1}.**     ${m.stars} ⭐  -  ${m.embeds[0].description || `[Image](${m.embeds[0].image.url})`}`);
+
+        const leaderboard = new Discord.MessageEmbed()
+            .setTitle(`${message.guild.name}'s starboard`)
+            .setDescription(content.join('\n'))
+        message.channel.send(leaderboard);
+    }
+})
+```
+
+The leaderboard function takes an optional argument which allows you to choose how many messages it will return.
+
 ## Custom database
 
 You can use your custom database to save starboards, instead of the json files (the "database" by default for discord-starboards). For this, you will need to extend the `StarboardsManager` class, and replace some methods with your custom ones. There are 4 methods you will need to replace:

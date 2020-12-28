@@ -11,6 +11,7 @@ const readFileAsync = promisify(readFile);
 const handleRaw = require('./handlers/raw');
 
 const { StarBoardCreateDefaultsOptions } = require('./constants');
+const Starboard = require('./bases/Starboard');
 
 
 /**
@@ -99,25 +100,21 @@ class StarboardsManager extends EventEmitter {
      * @param {Discord.Channel} channel
      * @param {object} options
      * @example
-     * manager.create(message.channel.id, {
+     * manager.create(message.channel, {
      *      starBotMsg: false,
      *      threshold: 2,
      * })
      */
-	create(channel, options) {
+	create(channel, options) { // TODO ajouter option pour les salons nsfw
 
-		const channelData = {
-			channelID: channel.id,
-			guildID: channel.guild.id,
-			options: this._mergeOptions(options),
-		};
+		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options));
 
-		if(this.starboards.find(data => data.channelID === channelData.channelID &&	data.options.emoji === channelData.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
+		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
 
-		this.starboards.push(channelData);
-		this.saveStarboard(channelData);
+		this.starboards.push(starboard);
+		this.saveStarboard(starboard);
 
-		this.emit('starboardCreate', channelData);
+		this.emit('starboardCreate', starboard);
 
 		return true;
 	}
@@ -160,7 +157,7 @@ class StarboardsManager extends EventEmitter {
 			try {
 				const starboards = await JSON.parse(storageContent.toString());
 				if (Array.isArray(starboards)) {
-					return starboards;
+					return Array.from(starboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this)));
 				}
 				else {
 					console.log(storageContent, starboards);
