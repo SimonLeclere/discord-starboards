@@ -107,7 +107,7 @@ class StarboardsManager extends EventEmitter {
      */
 	create(channel, options) { // TODO ajouter option pour les salons nsfw
 
-		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options));
+		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options), this);
 
 		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
 
