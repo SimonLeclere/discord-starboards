@@ -110,7 +110,7 @@ client.on('message', (message) => {
     const command = args.shift().toLowerCase();
 
     if (command === 'delete') {
-        client.starboardsManager.delete(message.channel);
+        client.starboardsManager.delete(message.channel.id);
         message.channel.send(`The ${message.channel} channel is no longer a starboard!`);
     }
 });
