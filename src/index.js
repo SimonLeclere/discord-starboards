@@ -193,9 +193,11 @@ class StarboardsManager extends EventEmitter {
      * @param {object} data
      */
 	async saveStarboard(data) {
+		const starboards = this.starboards;
+		starboards.forEach(e => delete e.manager);
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(this.starboards),
+			JSON.stringify(starboards),
 			'utf-8',
 		);
 		return true;
