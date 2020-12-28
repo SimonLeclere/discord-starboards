@@ -97,6 +97,9 @@ let allStarboards = client.starboardsManager.starboards; // returns an array of 
 
 // The list of all the starboards on the server with ID "1909282092"
 let onServer = client.starboardsManager.starboards.filter((s) => s.guildID === '1909282092');
+
+// There can't be two starboards with the same emoji on the same server.
+let starboard = client.starboardsManager.starboards.find(s => s.guildID === message.guild.id && s.options.emoji === '⭐');
 ```
 
 ### Delete a starboard
