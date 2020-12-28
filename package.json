@@ -1,6 +1,6 @@
 {
   "name": "discord-starboards",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
   "main": "src/index.js",
   "scripts": {
