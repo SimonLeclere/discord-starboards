@@ -193,11 +193,16 @@ class StarboardsManager extends EventEmitter {
      * @param {object} data
      */
 	async saveStarboard(data) {
-		const starboards = this.starboards;
-		starboards.forEach(e => delete e.manager);
+		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(starboards),
+			JSON.stringify(Array.from(starboards.map(e => {
+				return {
+					channelID: e.channelID,
+					guildID: e.guildID,
+					options: e.options,
+				};
+			}))),
 			'utf-8',
 		);
 		return true;
