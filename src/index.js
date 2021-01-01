@@ -55,6 +55,7 @@ class StarboardsManager extends EventEmitter {
 				selfstar: options.messages && options.messages.selfStar ? options.messages.selfstar : 'You cannot star your own messages.',
 				starbot: options.messages && options.messages.starbot ? options.messages.starbot : 'You cannot star bot messages.',
 				emptyMsg: options.messages && options.messages.emptyMsg ? options.messages.emptyMsg : 'You cannot star an empty message.',
+				starStar: options.messages && options.messages.starStar ? options.messages.starStar : 'You can\'t star a message that is already in the starboard.',
 			},
 		};
 

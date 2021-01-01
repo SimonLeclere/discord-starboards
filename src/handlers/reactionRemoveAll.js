@@ -13,9 +13,9 @@ module.exports = async (manager, message) => {
 		manager.emit('starboardReactionRemoveAll', message);
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
-		const stars = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.id));
-		if (stars) {
-			const foundStar = stars.embeds[0];
+		const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.id));
+		if (starMessage) {
+			const foundStar = starMessage.embeds[0];
 			const image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
 			const starEmbed = new MessageEmbed()
 				.setColor(foundStar.color)
@@ -24,7 +24,7 @@ module.exports = async (manager, message) => {
 				.setTimestamp()
 				.setFooter(`${data.options.emoji} 0 | ${message.id}`)
 				.setImage(image);
-			const starMsg = await starChannel.messages.fetch(stars.id);
+			const starMsg = await starChannel.messages.fetch(starMessage.id);
 			await starMsg.edit({ embed: starEmbed });
 			return starMsg.delete({ timeout: 1000 });
 		}
