@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js');
+const axios = require('axios');
 
 module.exports = async (manager, emoji, message, user) => {
 
@@ -46,7 +47,7 @@ module.exports = async (manager, emoji, message, user) => {
 		let embedImage = '';
 		let embedContent = '';
 
-		if(message.embeds.length > 0) {
+		if(message.embeds.length > 0 && data.options.starEmbed) {
 			if(message.embeds[0].footer && message.embeds[0].footer.text) {
 				const alreadyInStarboard = !!fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.embeds[0].footer.text.split(' | ')[1]));
 				if(alreadyInStarboard) return message.channel.send(manager.options.messages.starStar);
@@ -55,12 +56,24 @@ module.exports = async (manager, emoji, message, user) => {
 			embedContent = message.embeds[0].description;
 		}
 
-		let image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
-		if(image === '') image = embedImage ? embedImage.url ? embedImage.url : '' : '';
 
 		let content = '';
 		if(message.cleanContent) content = message.cleanContent.length > 2000 ? message.cleanContent.slice(0, 2000) + '\n...' : message.cleanContent;
 		else content = embedContent ? embedContent : '';
+
+
+		let image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
+		if(image === '') image = embedImage ? embedImage.url ? embedImage.url : '' : '';
+		if(image === '') {
+			const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+			let url = content.match(regex);
+			if(url) {
+				url = url[0];
+				const response = await axios.get(url);
+				const mimeType = response.headers['content-type'];
+				if(mimeType.startsWith('image/')) image = url;
+			}
+		}
 
 
 		if (image === '' && content === '') return message.channel.send(manager.options.messages.emptyMsg);
@@ -73,7 +86,7 @@ module.exports = async (manager, emoji, message, user) => {
 			.setTimestamp(new Date())
 			.setFooter(`${data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`)
 			.setImage(image);
-		await starChannel.send({ embed: starEmbed });
+		starChannel.send({ embed: starEmbed });
 
 	}
 

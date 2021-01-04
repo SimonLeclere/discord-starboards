@@ -13,6 +13,8 @@ exports.StarBoardCreateDefaultsOptions = {
 	emoji: '⭐',
 	starBotMsg: true,
 	selfStar: true,
+	starEmbed: true,
+	resolveImageUrl: true,
 	attachments: true,
 	threshold: 1,
 	color: '#f1c40f',

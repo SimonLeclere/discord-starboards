@@ -91,6 +91,9 @@ class StarboardsManager extends EventEmitter {
 			emoji: typeof options.emoji === 'string' ? options.emoji : this.defaultsOptions.emoji,
 			starBotMsg: typeof options.starBotMsg === 'boolean' ? options.starBotMsg : this.defaultsOptions.starBotMsg,
 			selfStar: typeof options.selfStar === 'boolean' ? options.selfStar : this.defaultsOptions.selfStar,
+			starEmbed: typeof options.starEmbed === 'boolean' ? options.starEmbed : this.defaultsOptions.starEmbed,
+			attachments: typeof options.attachments === 'boolean' ? options.attachments : this.defaultsOptions.attachments,
+			resolveImageUrl: typeof options.resolveImageUrl === 'boolean' ? options.resolveImageUrl : this.defaultsOptions.resolveImageUrl,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options && options.color ? options.color : this.defaultsOptions.color,
 		};
