@@ -16,7 +16,7 @@ module.exports = async (manager, message) => {
 		const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.id));
 		if (starMessage) {
 			const foundStar = starMessage.embeds[0];
-			const image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
+			const image = foundStar.image && foundStar.image.url || '';
 			const starEmbed = new MessageEmbed()
 				.setColor(foundStar.color)
 				.setDescription(foundStar.description || '')
@@ -32,11 +32,3 @@ module.exports = async (manager, message) => {
 	});
 
 };
-
-function extension(attachment) {
-	const imageLink = attachment.split('.');
-	const typeOfImage = imageLink[imageLink.length - 1];
-	const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
-	if (!image) return '';
-	return attachment;
-}
