@@ -111,6 +111,8 @@ class StarboardsManager extends EventEmitter {
      */
 	create(channel, options) { // TODO ajouter option pour les salons nsfw
 
+		console.log(options);
+
 		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options), this);
 
 		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
@@ -185,9 +187,16 @@ class StarboardsManager extends EventEmitter {
      * @param {Discord.Snowflake} channelID
      */
 	async deleteStarboard(channelID) {
+		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(this.starboards),
+			JSON.stringify(Array.from(starboards.map(e => {
+				return {
+					channelID: e.channelID,
+					guildID: e.guildID,
+					options: e.options,
+				};
+			}))),
 			'utf-8',
 		);
 		return true;
