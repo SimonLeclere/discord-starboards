@@ -126,14 +126,15 @@ class StarboardsManager extends EventEmitter {
 	/**
      * Delete a starboard by its guildID
      * @param {Discord.Snowflake} guildID
+	 * @param {String} emoji
      * @example
      * manager.delete(message.channel.id)
      */
-	delete(channelID) {
-		const data = this.starboards.find(channelData => channelData.channelID === channelID);
+	delete(channelID, emoji) {
+		const data = this.starboards.find(channelData => channelData.channelID === channelID && channelData.options.emoji === emoji);
 		if(!data) throw new Error(`The channel "${channelID}" is not a starboard`);
 
-		this.starboards = this.starboards.filter(channelData => channelData.channelID !== channelID);
+		this.starboards = this.starboards.filter(channelData => !(channelData.channelID === channelID && channelData.options.emoji === emoji));
 
 		this.deleteStarboard(channelID);
 
