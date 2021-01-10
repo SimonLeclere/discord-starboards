@@ -2,7 +2,7 @@
  * The default create options for new starboards
  * @typedef StarBoardCreateDefaultsOptions
  *
- * @property {String} emoji The emoji to react with in order to get the message into the starboard
+ * @property {String} emoji The emoji to react with in order to get the message into the starboard. If it's a custom emoji, it must be formatted as name:id.
  * @property {Boolean} starBotMsg Whether or not the messages from bots can be starred
  * @property {Boolean} selfStar Whether users can star their own messages or not
  * @property {Boolean} attachments Whether images can be starred or not

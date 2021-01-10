@@ -3,13 +3,11 @@ const axios = require('axios');
 
 module.exports = async (manager, emoji, message, user) => {
 
-
 	const data = manager.starboards.find(channelData => channelData.guildID === message.guild.id && channelData.options.emoji === emoji);
 	if(!data) return;
 
 	const starChannel = manager.client.channels.cache.get(data.channelID);
 	if (!starChannel) return;
-
 
 	if(emoji !== data.options.emoji || user.bot) return;
 
