@@ -13,8 +13,8 @@ module.exports = async (manager, emoji, message, user) => {
 
 	if(emoji !== data.options.emoji || user.bot) return;
 
-	if (message.author.id === user.id && !data.options.selfStar) return message.channel.send(manager.options.messages.selfStar);
-	if (message.author.bot && !data.options.starBotMsg) return message.channel.send(manager.options.messages.starbot);
+	if (message.author.id === user.id && !data.options.selfStar) return manager.emit('starboardNoSelfStar', emoji, message, user);
+	if (message.author.bot && !data.options.starBotMsg) return manager.emit('starboardNoStarBot', emoji, message, user);
 
 	manager.emit('starboardReactionAdd', emoji, message, user);
 
@@ -50,7 +50,7 @@ module.exports = async (manager, emoji, message, user) => {
 		if(message.embeds.length > 0 && data.options.starEmbed) {
 			if(message.embeds[0].footer && message.embeds[0].footer.text) {
 				const alreadyInStarboard = !!fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.embeds[0].footer.text.split(' | ')[1]));
-				if(alreadyInStarboard) return message.channel.send(manager.options.messages.starStar);
+				if(alreadyInStarboard) return manager.emit('starboardAlreadyStarred', emoji, message, user);
 			}
 			embedImage = message.embeds[0].image;
 			embedContent = message.embeds[0].description;
@@ -76,7 +76,7 @@ module.exports = async (manager, emoji, message, user) => {
 		}
 
 
-		if (image === '' && content === '') return message.channel.send(manager.options.messages.emptyMsg);
+		if (image === '' && content === '') return manager.emit('starboardNoEmptyMsg', emoji, message, user);
 
 
 		const starEmbed = new MessageEmbed()

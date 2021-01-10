@@ -51,12 +51,6 @@ class StarboardsManager extends EventEmitter {
          */
 		this.options = {
 			storage: typeof options.storage === 'boolean' || typeof options.storage === 'string' ? options.storage : './starboards.json',
-			messages: {
-				selfstar: options.messages && options.messages.selfStar ? options.messages.selfstar : 'You cannot star your own messages.',
-				starbot: options.messages && options.messages.starbot ? options.messages.starbot : 'You cannot star bot messages.',
-				emptyMsg: options.messages && options.messages.emptyMsg ? options.messages.emptyMsg : 'You cannot star an empty message.',
-				starStar: options.messages && options.messages.starStar ? options.messages.starStar : 'You can\'t star a message that is already in the starboard.',
-			},
 		};
 
 		this._init();
@@ -103,14 +97,14 @@ class StarboardsManager extends EventEmitter {
 	/**
      * Create a Starboard and save it in the database
      * @param {Discord.Channel} channel
-     * @param {object} options
+     * @param {StarBoardCreateDefaultsOptions} options
      * @example
      * manager.create(message.channel, {
      *      starBotMsg: false,
      *      threshold: 2,
      * })
      */
-	create(channel, options) { // TODO ajouter option pour les salons nsfw
+	create(channel, options) {
 
 		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options), this);
 
@@ -284,6 +278,7 @@ class StarboardsManager extends EventEmitter {
  */
 
 /**
+ * Emitted when a user reacts to a message in a nsfw channel and the `allowNsfw` option is disabled.
  * @event StarboardsManager#starboardReactionNsfw
  * @param {string} emoji The emoji
  * @param {Discord.Message} message The message
@@ -291,6 +286,54 @@ class StarboardsManager extends EventEmitter {
  * @example
  * manager.on('starboardReactionNsfw', (emoji, message, user) => {
  *      message.channel.send(`${user.username}, you cannot add messages from an nsfw channel to the starboard.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to his own message and the `selfStar` option is disabled.
+ * @event StarboardsManager#starboardNoSelfStar
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoSelfStar', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star your own messages.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a bot message and the `starBot` option is disabled.
+ * @event StarboardsManager#starboardNoStarBot
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoStarBot', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star bot messages.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * @event StarboardsManager#starboardAlreadyStarred
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardAlreadyStarred', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, this message is already in the starboard.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a message without exploitable content for the starboard
+ * @event StarboardsManager#starboardNoEmptyMsg
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star an empty message.`)
  * });
  */
 

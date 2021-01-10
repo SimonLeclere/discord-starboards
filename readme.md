@@ -9,7 +9,7 @@ Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allow
 -   📁 Support for all databases! (default is json)
 -   🌐 Support for multiple starboards per server, and even per channels with a different emoji and different options!
 -   ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, etc...)
--   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll, starboardReactionNsfw
+-   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll, starboardReactionNsfw, starboardNoSelfStar, starboardNoStarBot, starboardAlreadyStarred, starboardNoEmptyMsg
 
 ## Description
 
@@ -41,11 +41,6 @@ const StarboardsManager = require('discord-starboards');
 // Initialise it
 const manager = new StarboardsManager(client, {
     storage: './starboards.json',
-    messages: {
-        selfstar: 'You cannot star your own messages.',
-        starbot: 'You cannot star messages from a bot.',
-        emptyMsg: 'You cannot star an empty message.',
-    }
 });
 
 // We now have a starboardsManager property to access the manager everywhere!
@@ -61,9 +56,6 @@ client.login('SUP3R_S3CR3T_T0K3N');
 Parameters: 
 -   **client**: the discord client (your discord bot instance)
 -   **options.storage**: A file path to choose where to store the starboards (or false if you use your own database)
--   **options.messages.selfstar**: The message sent when a user stars his own message. Has no effect for starboards with the `selfstar` option disabled.
--   **options.messages.starbot**: The message sent when a user stars a bot's message. Has no effect for starboards with the `starBotMsg` option disabled.
--   **options.messages.emptyMsg**: The message sent when a user stars a message that has no exploitable content for the starboard (embeds for example).
 
 After that, the module will automatically retrieve already existing starboards and start waiting for reactions.
 
@@ -81,12 +73,15 @@ client.on('message', (message) => {
 });
 ```
 
--   **options.emoji**: The emoji to react with in order to get the message into the starboard. The default emoji is `⭐`.
+-   **options.emoji**: The emoji to react with in order to get the message into the starboard. If it's a custom emoji, it must be formatted as <:name:id>. The default emoji is `⭐`.
 -   **options.starBotMsg**: Whether or not the messages from bots can be starred. Default value is true.
 -   **options.selfStar**: Whether users can star their own messages or not. Default value is true.
+-   **options.starEmbed**: Whether users can star embeds or not. The default value is true.
 -   **options.attachments**: Whether images can be starred or not. Default value is true.
+-   **resolveImageUrl**: Whether image links are displayed as an image or as a link. The default value is true.
 -   **options.threshold**: The number of reactions it takes before a message enters the starboard. By default it is 0.
 -   **options.color**: A string representing the color of the embed. The default value is `#f1c40f` (Yellow).
+-   **options.allowNsfw**: Whether messages in an nsfw channel can be starred or not. The default value is false.
 
 
 ### Fetch starboards
@@ -204,4 +199,138 @@ client.on('ready', () => {
 });
 
 client.login('SUP3R_S3CR3T_T0K3N');
+```
+
+## Events
+
+Events are powerful tools to add conditions for a message to enter the starboard, to send custom messages when a user encounters an error, ...
+
+```js
+/**
+ * Emitted when a starboard is created
+ * @event StarboardsManager#starboardCreate
+ * @param {object} data The channel data
+ *
+ * @example
+ * // This can be used to add features such as a log message
+ * manager.on('starboardCreate', (data) => {
+ *     console.log(`New starboard ! ChannelID: ${data.channelID}`);
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a starboard is deleted
+ * @event StarboardsManager#starboardDelete
+ * @param {object} data The channel data
+ *
+ * @example
+ * // This can be used to add features such as a log message
+ * manager.on('starboardDelete', (data) => {
+ *     console.log(`Starboard deleted ! ChannelID: ${data.channelID}`);
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a new reaction for a starboard is received, whether the message is cached or not.
+ * @event StarboardsManager#starboardReactionAdd
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * // This can be used to add features such as a an additional filter so that only certain roles have access to the starboard
+ * manager.on('starboardReactionAdd', (emoji, message, user) => {
+ *      console.log(`${user.username} reacted to a message with ${emoji}.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a reaction for a starboard is removed, whether the message is cached or not.
+ * @event StarboardsManager#starboardReactionRemove
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardReactionRemove', (emoji, message, user) => {
+ *      console.log(`${user.username} remove his reaction to a message.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when all reactions to a starboard message are removed, whether the message is cached or not.
+ * @event StarboardsManager#starboardReactionRemoveAll
+ * @param {Discord.Message} message The message
+ * @example
+ * manager.on('starboardReactionAdd', (message) => {
+ *      console.log(`Message ${message.id} purged.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a user reacts to a message in a nsfw channel and the `allowNsfw` option is disabled.
+ * @event StarboardsManager#starboardReactionNsfw
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardReactionNsfw', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot add messages from an nsfw channel to the starboard.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a user reacts to his own message and the `selfStar` option is disabled.
+ * @event StarboardsManager#starboardNoSelfStar
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoSelfStar', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star your own messages.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a user reacts to a bot message and the `starBot` option is disabled.
+ * @event StarboardsManager#starboardNoStarBot
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoStarBot', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star bot messages.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * @event StarboardsManager#starboardAlreadyStarred
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardAlreadyStarred', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, this message is already in the starboard.`)
+ * });
+ */
+```
+```js
+/**
+ * Emitted when a user reacts to a message without exploitable content for the starboard
+ * @event StarboardsManager#starboardNoEmptyMsg
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star an empty message.`)
+ * });
+ */
 ```
