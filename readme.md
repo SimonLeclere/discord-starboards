@@ -9,7 +9,7 @@ Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allow
 -   📁 Support for all databases! (default is json)
 -   🌐 Support for multiple starboards per server, and even per channels with a different emoji and different options!
 -   ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, etc...)
--   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll
+-   💥 Events: starboardCreate, starboardDelete, starboardReactionAdd, starboardReactionRemove, starboardReactionRemoveAll, starboardReactionNsfw
 
 ## Description
 
@@ -95,8 +95,8 @@ client.on('message', (message) => {
 // The list of all the starboards
 let allStarboards = client.starboardsManager.starboards; // returns an array of starboards
 
-// The list of all the starboards on the server with ID "1909282092"
-let onServer = client.starboardsManager.starboards.filter((s) => s.guildID === '1909282092');
+// The list of all the starboards on the server with ID "710219907890937856"
+let onServer = client.starboardsManager.starboards.filter((s) => s.guildID === '710219907890937856');
 
 // There can't be two starboards with the same emoji on the same server.
 let starboard = client.starboardsManager.starboards.find(s => s.guildID === message.guild.id && s.options.emoji === '⭐');
@@ -110,7 +110,7 @@ client.on('message', (message) => {
     const command = args.shift().toLowerCase();
 
     if (command === 'delete') {
-        client.starboardsManager.delete(message.channel.id);
+        client.starboardsManager.delete(message.channel.id, '⭐');
         message.channel.send(`The ${message.channel} channel is no longer a starboard!`);
     }
 });
@@ -182,9 +182,9 @@ const StarboardsManagerCustomDb = class extends StarboardsManager {
 
 
     // This function is called when a starboard needs to be deleted from the database.
-    async deleteStarboard(channelID) {
+    async deleteStarboard(channelID, emoji) {
         // Remove the starboard from the array
-        const newStarboardsArray = db.get('starboards').filter((starboard) => starboard.channelID !== channelID);
+        const newStarboardsArray = db.get('starboards').filter((starboard) => !(starboard.channelID === channelID && starboard.options.emoji === emoji));
         // Save the updated array
         db.set('starboards', newStarboardsArray);
         // Don't forget to return something!

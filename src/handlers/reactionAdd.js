@@ -9,6 +9,8 @@ module.exports = async (manager, emoji, message, user) => {
 	const starChannel = manager.client.channels.cache.get(data.channelID);
 	if (!starChannel) return;
 
+	if(!data.options.allowNsfw && message.channel.nsfw) return manager.emit('starboardReactionNsfw', emoji, message, user);
+
 	if(emoji !== data.options.emoji || user.bot) return;
 
 	if (message.author.id === user.id && !data.options.selfStar) return message.channel.send(manager.options.messages.selfStar);

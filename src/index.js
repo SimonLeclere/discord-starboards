@@ -96,6 +96,7 @@ class StarboardsManager extends EventEmitter {
 			resolveImageUrl: typeof options.resolveImageUrl === 'boolean' ? options.resolveImageUrl : this.defaultsOptions.resolveImageUrl,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options && options.color ? options.color : this.defaultsOptions.color,
+			allowNsfw: options && options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
 		};
 	}
 
@@ -279,6 +280,17 @@ class StarboardsManager extends EventEmitter {
  * @example
  * manager.on('starboardReactionAdd', (message) => {
  *      console.log(`Message ${message.id} purged.`)
+ * });
+ */
+
+/**
+ * @event StarboardsManager#starboardReactionNsfw
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardReactionNsfw', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot add messages from an nsfw channel to the starboard.`)
  * });
  */
 
