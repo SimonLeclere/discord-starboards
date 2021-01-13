@@ -264,7 +264,7 @@ Events are powerful tools to add conditions for a message to enter the starboard
  * @event StarboardsManager#starboardReactionRemoveAll
  * @param {Discord.Message} message The message
  * @example
- * manager.on('starboardReactionAdd', (message) => {
+ * manager.on('starboardReactionRemoveAll', (message) => {
  *      console.log(`Message ${message.id} purged.`)
  * });
  */
