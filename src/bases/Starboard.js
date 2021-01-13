@@ -27,6 +27,7 @@ class Starboard {
 				const regex = new RegExp(`^${this.options.emoji}\\s([0-9]{1,3})\\s\\|\\s([0-9]{17,20})`);
 				const star = regex.exec(m.embeds[0].footer.text);
 				m.stars = parseInt(star[1]);
+				if(m.embeds[0] && m.embeds[0].image && m.embeds[0].image.url) m.image = m.embeds[0] && m.embeds[0].image && m.embeds[0].image.url;
 				return m;
 			})
 			.sort((a, b) => b.stars - a.stars)
