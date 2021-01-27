@@ -2,7 +2,7 @@
   "name": "discord-starboards",
   "version": "2.2.0",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
-  "main": "src/index.js",
+  "main": "src/index.js", 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
