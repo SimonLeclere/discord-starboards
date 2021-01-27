@@ -51,11 +51,6 @@ class StarboardsManager extends EventEmitter {
          */
 		this.options = {
 			storage: typeof options.storage === 'boolean' || typeof options.storage === 'string' ? options.storage : './starboards.json',
-			messages: {
-				selfstar: options.messages && options.messages.selfStar ? options.messages.selfstar : 'You cannot star your own messages.',
-				starbot: options.messages && options.messages.starbot ? options.messages.starbot : 'You cannot star bot messages.',
-				emptyMsg: options.messages && options.messages.emptyMsg ? options.messages.emptyMsg : 'You cannot star an empty message.',
-			},
 		};
 
 		this._init();
@@ -90,22 +85,26 @@ class StarboardsManager extends EventEmitter {
 			emoji: typeof options.emoji === 'string' ? options.emoji : this.defaultsOptions.emoji,
 			starBotMsg: typeof options.starBotMsg === 'boolean' ? options.starBotMsg : this.defaultsOptions.starBotMsg,
 			selfStar: typeof options.selfStar === 'boolean' ? options.selfStar : this.defaultsOptions.selfStar,
+			starEmbed: typeof options.starEmbed === 'boolean' ? options.starEmbed : this.defaultsOptions.starEmbed,
+			attachments: typeof options.attachments === 'boolean' ? options.attachments : this.defaultsOptions.attachments,
+			resolveImageUrl: typeof options.resolveImageUrl === 'boolean' ? options.resolveImageUrl : this.defaultsOptions.resolveImageUrl,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options && options.color ? options.color : this.defaultsOptions.color,
+			allowNsfw: options && options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
 		};
 	}
 
 	/**
      * Create a Starboard and save it in the database
      * @param {Discord.Channel} channel
-     * @param {object} options
+     * @param {StarBoardCreateDefaultsOptions} options
      * @example
      * manager.create(message.channel, {
      *      starBotMsg: false,
      *      threshold: 2,
      * })
      */
-	create(channel, options) { // TODO ajouter option pour les salons nsfw
+	create(channel, options) {
 
 		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options), this);
 
@@ -122,16 +121,17 @@ class StarboardsManager extends EventEmitter {
 	/**
      * Delete a starboard by its guildID
      * @param {Discord.Snowflake} guildID
+	 * @param {String} emoji
      * @example
      * manager.delete(message.channel.id)
      */
-	delete(channelID) {
-		const data = this.starboards.find(channelData => channelData.channelID === channelID);
+	delete(channelID, emoji) {
+		const data = this.starboards.find(channelData => channelData.channelID === channelID && channelData.options.emoji === emoji);
 		if(!data) throw new Error(`The channel "${channelID}" is not a starboard`);
 
-		this.starboards = this.starboards.filter(channelData => channelData.channelID !== channelID);
+		this.starboards = this.starboards.filter(channelData => !(channelData.channelID === channelID && channelData.options.emoji === emoji));
 
-		this.deleteStarboard(channelID);
+		this.deleteStarboard(channelID, emoji);
 
 		this.emit('starboardDelete', data);
 
@@ -178,11 +178,19 @@ class StarboardsManager extends EventEmitter {
 	/**
      * Delete a starboard of the database
      * @param {Discord.Snowflake} channelID
+	 * @param {String} emoji
      */
-	async deleteStarboard(channelID) {
+	async deleteStarboard(channelID, emoji) {
+		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(this.starboards),
+			JSON.stringify(Array.from(starboards.map(e => {
+				return {
+					channelID: e.channelID,
+					guildID: e.guildID,
+					options: e.options,
+				};
+			}))),
 			'utf-8',
 		);
 		return true;
@@ -266,6 +274,66 @@ class StarboardsManager extends EventEmitter {
  * @example
  * manager.on('starboardReactionAdd', (message) => {
  *      console.log(`Message ${message.id} purged.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a message in a nsfw channel and the `allowNsfw` option is disabled.
+ * @event StarboardsManager#starboardReactionNsfw
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardReactionNsfw', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot add messages from an nsfw channel to the starboard.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to his own message and the `selfStar` option is disabled.
+ * @event StarboardsManager#starboardNoSelfStar
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoSelfStar', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star your own messages.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a bot message and the `starBot` option is disabled.
+ * @event StarboardsManager#starboardNoStarBot
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoStarBot', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star bot messages.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * @event StarboardsManager#starboardAlreadyStarred
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardAlreadyStarred', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, this message is already in the starboard.`)
+ * });
+ */
+
+/**
+ * Emitted when a user reacts to a message without exploitable content for the starboard
+ * @event StarboardsManager#starboardNoEmptyMsg
+ * @param {string} emoji The emoji
+ * @param {Discord.Message} message The message
+ * @param {Discord.User} user The user who reacted
+ * @example
+ * manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
+ *      message.channel.send(`${user.username}, you cannot star an empty message.`)
  * });
  */
 
