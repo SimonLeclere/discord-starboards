@@ -76,7 +76,8 @@ client.on('message', (message) => {
 
     if (command === 'create-starboard') {
         client.starboardsManager.create(message.channel, {
-            threshold: 3
+            threshold: 3,
+            // Other options go here
         });
         message.channel.send(`The ${message.channel} channel is now a starboard!`);
     }
