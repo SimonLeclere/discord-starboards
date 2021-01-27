@@ -75,7 +75,9 @@ client.on('message', (message) => {
     const command = args.shift().toLowerCase();
 
     if (command === 'create-starboard') {
-        client.starboardsManager.create(message.channel);
+        client.starboardsManager.create(message.channel, {
+            threshold: 3
+        });
         message.channel.send(`The ${message.channel} channel is now a starboard!`);
     }
 });
