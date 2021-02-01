@@ -111,7 +111,7 @@ class StarboardsManager extends EventEmitter {
 		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
 
 		this.starboards.push(starboard);
-		this.saveStarboard(starboard);
+		this.saveStarboard(starboard.toObject());
 
 		this.emit('starboardCreate', starboard);
 
