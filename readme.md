@@ -373,3 +373,14 @@ Events are powerful tools to add conditions for a message to enter the starboard
  * });
  */
 ```
+
+```js
+/**
+ * Emitted when a starboard is edited
+ * @event StarboardsManager#starboardEdited
+ * @param {Starboard} data The new starboard
+ * manager.on('starboardEdited', data => {
+ *      message.channel.send(`Starboard (channel ${data.channelID}) edited !`)
+ * });
+ */
+```

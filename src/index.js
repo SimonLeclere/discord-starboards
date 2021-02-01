@@ -152,7 +152,10 @@ class StarboardsManager extends EventEmitter {
 			if (!starboard) {
 				return reject('No Starboard found.');
 			}
-			starboard.edit(data).then(resolve).catch(reject);
+			starboard.edit(data).then(s => {
+				this.emit('starboardEdited', s);
+				resolve(s);
+			}).catch(reject);
 		});
 	}
 
@@ -369,6 +372,15 @@ class StarboardsManager extends EventEmitter {
  * @example
  * manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
  *      message.channel.send(`${user.username}, you cannot star an empty message.`)
+ * });
+ */
+
+/**
+ * Emitted when a starboard is edited
+ * @event StarboardsManager#starboardEdited
+ * @param {Starboard} data The new starboard
+ * manager.on('starboardEdited', data => {
+ *      message.channel.send(`Starboard (channel ${data.channelID}) edited !`)
  * });
  */
 
