@@ -70,7 +70,8 @@ class StarboardsManager extends EventEmitter {
      * @private
      */
 	async _init() {
-		this.starboards = await this.getAllStarboards();
+		const allStarboards = await this.getAllStarboards();
+		this.starboards = allStarboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this));
 	}
 
 	/**
@@ -89,8 +90,8 @@ class StarboardsManager extends EventEmitter {
 			attachments: typeof options.attachments === 'boolean' ? options.attachments : this.defaultsOptions.attachments,
 			resolveImageUrl: typeof options.resolveImageUrl === 'boolean' ? options.resolveImageUrl : this.defaultsOptions.resolveImageUrl,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
-			color: options && options.color ? options.color : this.defaultsOptions.color,
-			allowNsfw: options && options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
+			color: options.color ? options.color : this.defaultsOptions.color,
+			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
 		};
 	}
 
@@ -139,6 +140,23 @@ class StarboardsManager extends EventEmitter {
 	}
 
 	/**
+	 * Edit a starboard
+	 * @param {Discord.Snowflake} channelID
+	 * @param {String} emoji
+	 * @param {StarBoardCreateDefaultsOptions} data
+	 * @returns {Promise<Starboard>}
+	 */
+	edit(channelID, emoji, data) {
+		return new Promise((resolve, reject) => {
+			const starboard = this.starboards.find((g) => g.channelID === channelID && g.options.emoji === emoji);
+			if (!starboard) {
+				return reject('No Starboard found.');
+			}
+			starboard.edit(data).then(resolve).catch(reject);
+		});
+	}
+
+	/**
      * Get a list of all starboards in the database.
      * @returns {Promise<object[]>}
      */
@@ -157,7 +175,7 @@ class StarboardsManager extends EventEmitter {
 			try {
 				const starboards = await JSON.parse(storageContent.toString());
 				if (Array.isArray(starboards)) {
-					return Array.from(starboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this)));
+					return Array.from(starboards);
 				}
 				else {
 					console.log(storageContent, starboards);
@@ -181,10 +199,9 @@ class StarboardsManager extends EventEmitter {
 	 * @param {String} emoji
      */
 	async deleteStarboard(channelID, emoji) {
-		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(Array.from(starboards.map(e => {
+			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
 					channelID: e.channelID,
 					guildID: e.guildID,
@@ -201,10 +218,28 @@ class StarboardsManager extends EventEmitter {
      * @param {object} data
      */
 	async saveStarboard(data) {
-		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(Array.from(starboards.map(e => {
+			JSON.stringify(Array.from(this.starboards.map(e => {
+				return {
+					channelID: e.channelID,
+					guildID: e.guildID,
+					options: e.options,
+				};
+			}))),
+			'utf-8',
+		);
+		return true;
+	}
+
+	/**
+     * Edit a starboard in the database
+     * @param {object} data
+     */
+	async editStarboard(channelID, emoji, data) {
+		await writeFileAsync(
+			this.options.storage,
+			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
 					channelID: e.channelID,
 					guildID: e.guildID,

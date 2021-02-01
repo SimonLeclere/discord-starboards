@@ -59,7 +59,7 @@ Parameters:
 
 After that, the module will automatically retrieve already existing starboards and start waiting for reactions.
 
-### Create a starboard
+### Create a starboard <a name="create"></a>
 
 ```js
 client.on('message', (message) => {
@@ -112,6 +112,25 @@ client.on('message', (message) => {
 ```
 
 When you use the delete function, the starboard data is deleted from the database.
+
+### Edit a Starboard
+```js
+client.on('message', (message) => {
+    const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+
+    if (command === 'edit-emoji') {
+        client.starboardsManager.edit(message.channel.id, '⭐', { emoji: args[0] });
+        message.channel.send(`The ${message.channel} starboard now uses the emoji ${args[0]}.`);
+    }
+});
+```
+
+The `edit` method takes 3 arguments:
+- channelID: The id of the channel to modify
+- emoji: The emoji of the starboard to be modified
+- data: An object containing the new starboard options (see [#Create a starboard](#create))
+
 
 ### Get the leaderboard of a server
 
