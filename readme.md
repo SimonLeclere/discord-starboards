@@ -131,6 +131,12 @@ The `edit` method takes 3 arguments:
 - emoji: The emoji of the starboard to be modified
 - data: An object containing the new starboard options (see [#Create a starboard](#create))
 
+Only the provided options are changed, to get the default options use the `starboardsManager.defaultsOptions` property.
+
+For example to reset the emoji of a starboard :
+```js
+client.starboardsManager.edit(message.channel.id, '⭐', { emoji: client.starboardsManager.defaultsOptions.emoji });
+```
 
 ### Get the leaderboard of a server
 
