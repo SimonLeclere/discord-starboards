@@ -171,6 +171,7 @@ You can use your custom database to save starboards, instead of the json files (
 -   `getAllStarboards`: this method returns an array of stored starboards.
 -   `saveStarboard`: this method stores a new starboard in the database.
 -   `deleteStarboard`: this method deletes a starboard already stored in the database.
+-   `editStarboard`: This method edits a starboard already saved in the database.
 
 **All the methods should be asynchronous to return a promise.**
 
@@ -200,11 +201,24 @@ const StarboardsManagerCustomDb = class extends StarboardsManager {
         return true;
     }
 
-
     // This function is called when a starboard needs to be deleted from the database.
     async deleteStarboard(channelID, emoji) {
         // Remove the starboard from the array
         const newStarboardsArray = db.get('starboards').filter((starboard) => !(starboard.channelID === channelID && starboard.options.emoji === emoji));
+        // Save the updated array
+        db.set('starboards', newStarboardsArray);
+        // Don't forget to return something!
+        return true;
+    }
+
+    // This function is called when a starboard needs to be edited in the database
+    async editStarboard(channelID, emoji, data) {
+        // Gets all the current starboards
+        const starboards = db.get('starboards');
+        // Remove the old starboard from the db
+        const newStarboardsArray = starboards.filter((starboard) => !(starboard.channelID === channelID && starboard.options.emoji === emoji));
+        // Push the new starboard to the array
+        newStarboardsArray.push(data);
         // Save the updated array
         db.set('starboards', newStarboardsArray);
         // Don't forget to return something!
