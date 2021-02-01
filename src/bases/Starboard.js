@@ -33,6 +33,14 @@ class Starboard {
 			.sort((a, b) => b.stars - a.stars)
 			.slice(0, count);
 	}
+
+	toObject() {
+		return {
+			channelID: this.channelID,
+			guildID: this.guildID,
+			options: this.options,
+		};
+	}
 }
 
 module.exports = Starboard;
