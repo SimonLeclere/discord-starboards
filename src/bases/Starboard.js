@@ -1,4 +1,4 @@
-const deepcopy = require('deepcopy');
+const cloneDeep = require('lodash.clonedeep');
 
 class Starboard {
 	constructor(channelID, guildID, options, manager) {
@@ -64,7 +64,7 @@ class Starboard {
 	 * @returns {Object}
 	 */
 	toObject() {
-		return deepcopy({
+		return cloneDeep({
 			channelID: this.channelID,
 			guildID: this.guildID,
 			options: this.options,
