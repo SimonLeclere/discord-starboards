@@ -7,6 +7,8 @@ You can use your custom database to save starboards, instead of the json files (
 -   `deleteStarboard`: this method deletes a starboard already stored in the database.
 -   `editStarboard`: This method edits a starboard already saved in the database.
 
+Don't forget to set the manager's `storage` option to false !
+
 **All the methods should be asynchronous to return a promise.**
 
 Here is an example, using quick.db, a Sqlite database. The comments in the code below are very important to understand how it works!
