@@ -3,7 +3,7 @@
   "version": "2.2.1",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
   "main": "src/index.js",
-  "scripts": { 
+  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "deepcopy": "^2.1.0",
     "discord.js": "^12.5.1"
   },
   "repository": {

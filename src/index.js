@@ -152,9 +152,10 @@ class StarboardsManager extends EventEmitter {
 			if (!starboard) {
 				return reject('No Starboard found.');
 			}
-			starboard.edit(data).then(s => {
-				this.emit('starboardEdited', s);
-				resolve(s);
+			const old = starboard.toObject();
+			starboard.edit(data).then(newStarboard => {
+				this.emit('starboardEdited', old, newStarboard);
+				resolve(newStarboard);
 			}).catch(reject);
 		});
 	}
@@ -278,7 +279,7 @@ class StarboardsManager extends EventEmitter {
  * manager.on('starboardDelete', (data) => {
  *     console.log(`Starboard deleted ! ChannelID: ${data.channelID}`);
  * });
- */
+*/
 
 /**
  * Emitted when a new reaction for a starboard is received, whether the message is cached or not.
@@ -310,7 +311,7 @@ class StarboardsManager extends EventEmitter {
  * @event StarboardsManager#starboardReactionRemoveAll
  * @param {Discord.Message} message The message
  * @example
- * manager.on('starboardReactionAdd', (message) => {
+ * manager.on('starboardReactionRemoveAll', (message) => {
  *      console.log(`Message ${message.id} purged.`)
  * });
  */
@@ -378,7 +379,8 @@ class StarboardsManager extends EventEmitter {
 /**
  * Emitted when a starboard is edited
  * @event StarboardsManager#starboardEdited
- * @param {Starboard} data The new starboard
+ * @param {Starboard} old The old starboard
+ * @param {Starboard} new The new starboard
  * manager.on('starboardEdited', data => {
  *      message.channel.send(`Starboard (channel ${data.channelID}) edited !`)
  * });

@@ -1,3 +1,5 @@
+const deepcopy = require('deepcopy');
+
 class Starboard {
 	constructor(channelID, guildID, options, manager) {
 		this.channelID = channelID;
@@ -62,11 +64,11 @@ class Starboard {
 	 * @returns {Object}
 	 */
 	toObject() {
-		return {
+		return deepcopy({
 			channelID: this.channelID,
 			guildID: this.guildID,
 			options: this.options,
-		};
+		});
 	}
 }
 

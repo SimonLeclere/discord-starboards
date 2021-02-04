@@ -5,12 +5,12 @@ module.exports = async (manager, message) => {
 	const starboards = manager.starboards.filter(channelData => channelData.guildID === message.guild.id);
 	if(!starboards) return;
 
+	manager.emit('starboardReactionRemoveAll', message);
+
 	starboards.forEach(async data => {
 
 		const starChannel = manager.client.channels.cache.get(data.channelID);
 		if (!starChannel) return;
-
-		manager.emit('starboardReactionRemoveAll', message);
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
 		const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.id));
