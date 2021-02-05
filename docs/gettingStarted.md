@@ -77,6 +77,8 @@ const leaderboard = new Discord.MessageEmbed()
 message.channel.send(leaderboard);
 ```
 
+## Conclusion
+
 Now that you know how to use the basics of the module, I strongly recommend that you read the following sections:
 - [Events](events.md)
 - [Custom database](customDatabase.md)

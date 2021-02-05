@@ -64,7 +64,7 @@ module.exports = async (manager, emoji, message, user) => {
 
 		let image = data.options.attachments ? (message.attachments.size > 0 ? await extension(message.attachments.array()[0].url) : '') : '';
 		if(image === '') image = embedImage ? embedImage.url ? embedImage.url : '' : '';
-		if(image === '') {
+		if(image === '' && data.options.resolveImageUrl) {
 			const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 			let url = content.match(regex);
 			if(url) {

@@ -50,7 +50,7 @@ client.on('message', (message) => {
 -   **options.selfStar**: Whether users can star their own messages or not. Default value is true.
 -   **options.starEmbed**: Whether users can star embeds or not. The default value is true.
 -   **options.attachments**: Whether images can be starred or not. Default value is true.
--   **resolveImageUrl**: Whether image links are displayed as an image or as a link. The default value is true.
+-   **options.resolveImageUrl**: Whether image links are displayed as an image or as a link. The default value is true.
 -   **options.threshold**: The number of reactions it takes before a message enters the starboard. By default it is 0.
 -   **options.color**: A string representing the color of the embed. The default value is `#f1c40f` (Yellow).
 -   **options.allowNsfw**: Whether messages in an nsfw channel can be starred or not. The default value is false.
@@ -321,7 +321,7 @@ Events are powerful tools to add conditions for a message to enter the starboard
 ```
 ```js
 /**
- * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * Emitted when a user reacts to a message that is already in the starboard.
  * @event StarboardsManager#starboardAlreadyStarred
  * @param {string} emoji The emoji
  * @param {Discord.Message} message The message

@@ -104,7 +104,7 @@ manager.on('starboardNoStarBot', (emoji, message, user) => {
 
 ## starboardAlreadyStarred
 
-This event is emitted when a user reacts to a starboard embed with the starStar option disabled.
+This event is emitted when a user reacts to a starboard embed.
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js

@@ -353,7 +353,7 @@ class StarboardsManager extends EventEmitter {
  */
 
 /**
- * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * Emitted when a user reacts to a message that is already in the starboard.
  * @event StarboardsManager#starboardAlreadyStarred
  * @param {string} emoji The emoji
  * @param {Discord.Message} message The message
