@@ -70,7 +70,8 @@ class StarboardsManager extends EventEmitter {
      * @private
      */
 	async _init() {
-		this.starboards = await this.getAllStarboards();
+		const allStarboards = await this.getAllStarboards();
+		this.starboards = allStarboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this));
 	}
 
 	/**
@@ -89,8 +90,8 @@ class StarboardsManager extends EventEmitter {
 			attachments: typeof options.attachments === 'boolean' ? options.attachments : this.defaultsOptions.attachments,
 			resolveImageUrl: typeof options.resolveImageUrl === 'boolean' ? options.resolveImageUrl : this.defaultsOptions.resolveImageUrl,
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
-			color: options && options.color ? options.color : this.defaultsOptions.color,
-			allowNsfw: options && options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
+			color: options.color ? options.color : this.defaultsOptions.color,
+			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
 		};
 	}
 
@@ -139,6 +140,27 @@ class StarboardsManager extends EventEmitter {
 	}
 
 	/**
+	 * Edit a starboard
+	 * @param {Discord.Snowflake} channelID
+	 * @param {String} emoji
+	 * @param {StarBoardCreateDefaultsOptions} data
+	 * @returns {Promise<Starboard>}
+	 */
+	edit(channelID, emoji, data) {
+		return new Promise((resolve, reject) => {
+			const starboard = this.starboards.find((g) => g.channelID === channelID && g.options.emoji === emoji);
+			if (!starboard) {
+				return reject('No Starboard found.');
+			}
+			const old = starboard.toObject();
+			starboard.edit(data).then(newStarboard => {
+				this.emit('starboardEdited', old, newStarboard);
+				resolve(newStarboard);
+			}).catch(reject);
+		});
+	}
+
+	/**
      * Get a list of all starboards in the database.
      * @returns {Promise<object[]>}
      */
@@ -157,7 +179,7 @@ class StarboardsManager extends EventEmitter {
 			try {
 				const starboards = await JSON.parse(storageContent.toString());
 				if (Array.isArray(starboards)) {
-					return Array.from(starboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this)));
+					return Array.from(starboards);
 				}
 				else {
 					console.log(storageContent, starboards);
@@ -181,10 +203,9 @@ class StarboardsManager extends EventEmitter {
 	 * @param {String} emoji
      */
 	async deleteStarboard(channelID, emoji) {
-		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(Array.from(starboards.map(e => {
+			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
 					channelID: e.channelID,
 					guildID: e.guildID,
@@ -201,10 +222,28 @@ class StarboardsManager extends EventEmitter {
      * @param {object} data
      */
 	async saveStarboard(data) {
-		const starboards = this.starboards.slice();
 		await writeFileAsync(
 			this.options.storage,
-			JSON.stringify(Array.from(starboards.map(e => {
+			JSON.stringify(Array.from(this.starboards.map(e => {
+				return {
+					channelID: e.channelID,
+					guildID: e.guildID,
+					options: e.options,
+				};
+			}))),
+			'utf-8',
+		);
+		return true;
+	}
+
+	/**
+     * Edit a starboard in the database
+     * @param {object} data
+     */
+	async editStarboard(channelID, emoji, data) {
+		await writeFileAsync(
+			this.options.storage,
+			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
 					channelID: e.channelID,
 					guildID: e.guildID,
@@ -240,7 +279,7 @@ class StarboardsManager extends EventEmitter {
  * manager.on('starboardDelete', (data) => {
  *     console.log(`Starboard deleted ! ChannelID: ${data.channelID}`);
  * });
- */
+*/
 
 /**
  * Emitted when a new reaction for a starboard is received, whether the message is cached or not.
@@ -272,7 +311,7 @@ class StarboardsManager extends EventEmitter {
  * @event StarboardsManager#starboardReactionRemoveAll
  * @param {Discord.Message} message The message
  * @example
- * manager.on('starboardReactionAdd', (message) => {
+ * manager.on('starboardReactionRemoveAll', (message) => {
  *      console.log(`Message ${message.id} purged.`)
  * });
  */
@@ -314,7 +353,7 @@ class StarboardsManager extends EventEmitter {
  */
 
 /**
- * Emitted when a user reacts to a message that is already in the starboard and the `starStar` option is disabled.
+ * Emitted when a user reacts to a message that is already in the starboard.
  * @event StarboardsManager#starboardAlreadyStarred
  * @param {string} emoji The emoji
  * @param {Discord.Message} message The message
@@ -334,6 +373,16 @@ class StarboardsManager extends EventEmitter {
  * @example
  * manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
  *      message.channel.send(`${user.username}, you cannot star an empty message.`)
+ * });
+ */
+
+/**
+ * Emitted when a starboard is edited
+ * @event StarboardsManager#starboardEdited
+ * @param {Starboard} old The old starboard
+ * @param {Starboard} new The new starboard
+ * manager.on('starboardEdited', data => {
+ *      message.channel.send(`Starboard (channel ${data.channelID}) edited !`)
  * });
  */
 

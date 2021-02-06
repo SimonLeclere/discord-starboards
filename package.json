@@ -3,7 +3,7 @@
   "version": "2.2.1",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
   "main": "src/index.js",
-  "scripts": { 
+  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "discord.js": "^12.5.1"
+    "discord.js": "^12.5.1",
+    "lodash.clonedeep": "^4.5.0"
   },
   "repository": {
     "type": "git",

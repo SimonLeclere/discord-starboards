@@ -1,3 +1,5 @@
+const cloneDeep = require('lodash.clonedeep');
+
 class Starboard {
 	constructor(channelID, guildID, options, manager) {
 		this.channelID = channelID;
@@ -34,12 +36,39 @@ class Starboard {
 			.slice(0, count);
 	}
 
+	/**
+	 * Edit the current Starboard instance
+	 * @param {Object} options
+	 * @returns {Promise<Starboard>}
+	 */
+	edit(options = {}) {
+		// eslint-disable-next-line no-async-promise-executor
+		return new Promise(async resolve => {
+
+			const emoji = this.options.emoji;
+
+			for(const element in options) {
+				if(!Object.keys(this.options).includes(element)) return;
+				this.options[element] = options[element];
+			}
+
+			// Call the db method
+			await this.manager.editStarboard(this.channelID, emoji, this.toObject());
+			resolve(this);
+		});
+	}
+
+
+	/**
+	 * Convert an instance of the Starboard class to a plain object
+	 * @returns {Object}
+	 */
 	toObject() {
-		return {
+		return cloneDeep({
 			channelID: this.channelID,
 			guildID: this.guildID,
 			options: this.options,
-		};
+		});
 	}
 }
 
