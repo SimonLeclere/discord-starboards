@@ -154,7 +154,7 @@ if(client.starboardsManager.starboards.find(s => s.guildID === message.guild.id)
 }
 ```
 
-### • Exploiter l'event starboardEdited
+### • Using the starboardEdited event
 
 ```js
 const transform = require('lodash.transform');
@@ -189,4 +189,24 @@ manager.on('starboardEdited', (old, updated) => {
     if(channel) return channel.send(embed);
 
 })
+```
+
+### Translating the "Jump to the message" section
+
+To translate "Jump to the message" you can use the `translateClickHere` option in the manager. It can be a string, a function that takes a message as a parameter, or null.
+
+```js
+const manager = new StarboardsManager(client, {
+    storage: false,
+    translateClickHere: 'Cliquez ici pour accéder au message', // 🇫🇷 French !
+});
+```
+
+Or
+
+```js
+const manager = new StarboardsManager(client, {
+    storage: false,
+    translateClickHere: (msg) => client.translate('starboardClickHere', message.guild.id) // Assuming the client.translate() function exists ;)
+});
 ```

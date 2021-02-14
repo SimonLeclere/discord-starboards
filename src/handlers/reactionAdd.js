@@ -78,12 +78,11 @@ module.exports = async (manager, emoji, message, user) => {
 
 		if (image === '' && content === '') return manager.emit('starboardNoEmptyMsg', emoji, message, user);
 
-
 		const starEmbed = new MessageEmbed()
 			.setColor(data.options.color)
-			.setDescription(content)
+			.setDescription(content !== '' ? `${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})` : '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
-			.setTimestamp(new Date())
+			.setTimestamp()
 			.setFooter(`${data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`)
 			.setImage(image);
 		starChannel.send({ embed: starEmbed });
