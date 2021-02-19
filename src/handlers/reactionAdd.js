@@ -9,12 +9,22 @@ module.exports = async (manager, emoji, message, user) => {
 	const starChannel = manager.client.channels.cache.get(data.channelID);
 	if (!starChannel) return;
 
-	if(!data.options.allowNsfw && message.channel.nsfw) return manager.emit('starboardReactionNsfw', emoji, message, user);
-
 	if(emoji !== data.options.emoji || user.bot) return;
 
-	if (message.author.id === user.id && !data.options.selfStar) return manager.emit('starboardNoSelfStar', emoji, message, user);
-	if (message.author.bot && !data.options.starBotMsg) return manager.emit('starboardNoStarBot', emoji, message, user);
+	if(!data.options.allowNsfw && message.channel.nsfw) {
+		message.reactions.resolve(emoji).users.remove(user.id);
+		return manager.emit('starboardReactionNsfw', emoji, message, user);
+	}
+
+	if (message.author.id === user.id && !data.options.selfStar) {
+		message.reactions.resolve(emoji).users.remove(user.id);
+		return manager.emit('starboardNoSelfStar', emoji, message, user);
+	}
+
+	if (message.author.bot && !data.options.starBotMsg) {
+		message.reactions.resolve(emoji).users.remove(user.id);
+		return manager.emit('starboardNoStarBot', emoji, message, user);
+	}
 
 	manager.emit('starboardReactionAdd', emoji, message, user);
 
