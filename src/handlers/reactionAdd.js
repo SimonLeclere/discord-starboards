@@ -112,7 +112,7 @@ function getColor(color, stars = 1) {
 	if(typeof color === 'string') return color;
 
 	else if (typeof color === 'object' && color.colors && color.max) {
-		const indice = Math.max(Math.min(Math.floor(stars / color.max * color.colors.length), color.colors.length), 0);
+		const indice = Math.max(Math.min(Math.floor(stars - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
 		return color.colors[indice];
 	}
 
