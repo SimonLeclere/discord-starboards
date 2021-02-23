@@ -22,7 +22,7 @@ module.exports = async (manager, emoji, message, user) => {
 		const foundStar = starMessage.embeds[0];
 		const image = foundStar.image && foundStar.image.url || '';
 		const starEmbed = new MessageEmbed()
-			.setColor(foundStar.color)
+			.setColor(getColor(data.options.color, parseInt(stars[1]) - 1) || foundStar.color)
 			.setDescription(foundStar.description || '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
@@ -36,3 +36,14 @@ module.exports = async (manager, emoji, message, user) => {
 	}
 
 };
+
+function getColor(color, stars = 1) {
+	if(typeof color === 'string') return color;
+
+	else if (typeof color === 'object' && color.gradient && color.max) {
+		const indice = Math.max(Math.min(Math.round(stars / color.max * color.colors.length), color.colors.length), 0);
+		return color.colors[indice];
+	}
+
+	else return null;
+}

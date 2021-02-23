@@ -26,8 +26,6 @@ module.exports = async (manager, emoji, message, user) => {
 		return manager.emit('starboardNoStarBot', emoji, message, user);
 	}
 
-	manager.emit('starboardReactionAdd', emoji, message, user);
-
 	const reaction = message.reactions.cache.get(emoji);
 	if(reaction && reaction.count < data.options.threshold) return;
 
@@ -39,17 +37,18 @@ module.exports = async (manager, emoji, message, user) => {
 		const stars = regex.exec(starMessage.embeds[0].footer.text);
 		const foundStar = starMessage.embeds[0];
 		const image = foundStar.image && foundStar.image.url || '';
+		const count = reaction && reaction.count ? reaction.count : parseInt(stars[1]) + 1;
 		const starEmbed = new MessageEmbed()
-			.setColor(foundStar.color)
+			.setColor(getColor(data.options.color, count) || foundStar.color)
 			.setDescription(foundStar.description || '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter(`${data.options.emoji} ${reaction && reaction.count ? reaction.count : parseInt(stars[1]) + 1} | ${message.id}`)
+			.setFooter(`${data.options.emoji} ${count} | ${message.id}`)
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
 		await starMsg.edit({ embed: starEmbed }).catch(() => {});
-
+		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
 
 	if (!starMessage) {
@@ -89,14 +88,14 @@ module.exports = async (manager, emoji, message, user) => {
 		if (image === '' && content === '') return manager.emit('starboardNoEmptyMsg', emoji, message, user);
 
 		const starEmbed = new MessageEmbed()
-			.setColor(data.options.color)
+			.setColor(getColor(data.options.color))
 			.setDescription(content !== '' ? `${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})` : '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter(`${data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`)
 			.setImage(image);
 		starChannel.send({ embed: starEmbed });
-
+		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
 
 };
@@ -107,4 +106,15 @@ function extension(attachment) {
 	const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
 	if (!image) return '';
 	return attachment;
+}
+
+function getColor(color, stars = 1) {
+	if(typeof color === 'string') return color;
+
+	else if (typeof color === 'object' && color.colors && color.max) {
+		const indice = Math.max(Math.min(Math.round(stars / color.max * color.colors.length), color.colors.length), 0);
+		return color.colors[indice];
+	}
+
+	else return null;
 }
