@@ -41,7 +41,7 @@ function getColor(color, stars = 1) {
 	if(typeof color === 'string') return color;
 
 	else if (typeof color === 'object' && color.gradient && color.max) {
-		const indice = Math.max(Math.min(Math.round(stars / color.max * color.colors.length), color.colors.length), 0);
+		const indice = Math.max(Math.min(Math.floor(stars / color.max * color.colors.length), color.colors.length), 0);
 		return color.colors[indice];
 	}
 

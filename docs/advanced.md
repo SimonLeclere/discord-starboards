@@ -112,7 +112,7 @@ client.starboardsManager.create(message.channel, {
 Type : [`colorResolvable`](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable) <br>
 Default value : `'#f1c40f' (yellow)`
 
-This option allows you to customize the color of the embeds of the starboard.
+This option allows you to customize the color of the embeds of the starboard. You can also use a gradient (see [Use a color gradient for the embed according to the number of stars](#use-a-color-gradient-for-the-embed-according-to-the-number-of-stars).
 
 ```js
 client.starboardsManager.create(message.channel, {
@@ -210,3 +210,17 @@ const manager = new StarboardsManager(client, {
     translateClickHere: (msg) => client.translate('starboardClickHere', message.guild.id) // Assuming the client.translate() function exists ;)
 });
 ```
+
+### Use a color gradient for the embed according to the number of stars
+
+L'option `color` peut être soit un String, soit un objet contenant une array de couleurs ainsi qu'un maximum.
+Cet objet doit être de la forme : 
+
+```js
+color: {
+    colors: ['#ffe26c', '#ffcc00', '#ff7c00', '#ff5500', '#ff0000'],
+    max: 10,
+}
+```
+
+In this example, if the message receives only one reaction, the color of the embed will be `#ffe26c`, if it receives 4 reactions, the color will be `#ff7c00`, and if the message receives 10 or more reactions, then its color will be `#ff0000`.
