@@ -213,8 +213,8 @@ const manager = new StarboardsManager(client, {
 
 ### Use a color gradient for the embed according to the number of stars
 
-L'option `color` peut être soit un String, soit un objet contenant une array de couleurs ainsi qu'un maximum.
-Cet objet doit être de la forme : 
+The `color` option can be either a string or an object containing an array of colors and a maximum.
+This object must be of the form : 
 
 ```js
 color: {
