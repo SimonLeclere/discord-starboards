@@ -15,6 +15,11 @@ declare module "discord-starboards" {
       options: StarboardDefaultCreateOptions;
     }
   
+    export interface ColorOptions {
+      colors: string[];
+      max: number;
+    }
+
     export interface StarboardDefaultCreateOptions {
       emoji: string;
       starBotMsg: boolean;
@@ -23,7 +28,7 @@ declare module "discord-starboards" {
       resolveImageUrl: boolean;
       attachments: boolean;
       threshold: number;
-      color: string;
+      color: string | ColorOptions;
       allowNsfw: boolean;
     }
   
@@ -80,5 +85,22 @@ declare module "discord-starboards" {
       ): this;
       public emit<E extends keyof StarboardEvents>(event: E, ...args: StarboardEvents[E]): boolean;
     }
+
+    export class Starboard {
+      public channelID: DJS.Snowflake;
+      public guildID: DJS.Snowflake;
+      public options: StarboardDefaultCreateOptions;
+      public manager: StarboardManager;
+
+      constructor(
+        channelID: DJS.Snowflake,
+        guildID: DJS.Snowflake,
+        options: StarboardDefaultCreateOptions,
+        manager: StarboardManager
+      );
+
+      leaderboard(count: number): DJS.Message[];
+      toObject(): Starboard;
+      edit(options: Partial<StarboardDefaultCreateOptions>): Promise<Starboard>;
+    }
   }
-  
