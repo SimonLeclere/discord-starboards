@@ -28,5 +28,6 @@
   "bugs": {
     "url": "https://github.com/SimonLeclere/discord-starboards/issues"
   },
-  "homepage": "https://github.com/SimonLeclere/discord-starboards"
+  "homepage": "https://github.com/SimonLeclere/discord-starboards",
+  "types": "typings/index.d.ts"
 }
