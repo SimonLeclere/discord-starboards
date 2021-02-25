@@ -16,7 +16,7 @@ declare module "discord-starboards" {
     }
   
     export interface ColorOptions {
-      colors: string[];
+      colors: DJS.ColorResolvable[];
       max: number;
     }
 
