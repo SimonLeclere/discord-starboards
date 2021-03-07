@@ -112,7 +112,7 @@ client.starboardsManager.create(message.channel, {
 Type : [`colorResolvable`](https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable) <br>
 Default value : `'#f1c40f' (yellow)`
 
-This option allows you to customize the color of the embeds of the starboard.
+This option allows you to customize the color of the embeds of the starboard. You can also use a gradient (see [Use a color gradient for the embed according to the number of stars](#use-a-color-gradient-for-the-embed-according-to-the-number-of-stars).
 
 ```js
 client.starboardsManager.create(message.channel, {
@@ -154,7 +154,7 @@ if(client.starboardsManager.starboards.find(s => s.guildID === message.guild.id)
 }
 ```
 
-### • Exploiter l'event starboardEdited
+### • Using the starboardEdited event
 
 ```js
 const transform = require('lodash.transform');
@@ -190,3 +190,37 @@ manager.on('starboardEdited', (old, updated) => {
 
 })
 ```
+
+### Translating the "Jump to the message" section
+
+To translate "Jump to the message" you can use the `translateClickHere` option in the manager. It can be a string, a function that takes a message as a parameter, or null.
+
+```js
+const manager = new StarboardsManager(client, {
+    storage: false,
+    translateClickHere: 'Cliquez ici pour accéder au message', // 🇫🇷 French !
+});
+```
+
+Or
+
+```js
+const manager = new StarboardsManager(client, {
+    storage: false,
+    translateClickHere: (msg) => client.translate('starboardClickHere', message.guild.id) // Assuming the client.translate() function exists ;)
+});
+```
+
+### Use a color gradient for the embed according to the number of stars
+
+The `color` option can be either a string or an object containing an array of colors and a maximum.
+This object must be of the form : 
+
+```js
+color: {
+    colors: ['#ffe26c', '#ffcc00', '#ff7c00', '#ff5500', '#ff0000'],
+    max: 10,
+}
+```
+
+In this example, if the message receives only one reaction, the color of the embed will be `#ffe26c`, if it receives 4 reactions, the color will be `#ff7c00`, and if the message receives 10 or more reactions, then its color will be `#ff0000`.
