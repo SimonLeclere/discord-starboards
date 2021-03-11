@@ -51,7 +51,7 @@ class StarboardsManager extends EventEmitter {
          */
 		this.options = {
 			storage: typeof options.storage === 'boolean' || typeof options.storage === 'string' ? options.storage : './starboards.json',
-			translateClickHere: typeof options.translateClickHere === 'function' ? options.translateClickHere : (msg) => options.translateClickHere ? options.translateClickHere : 'Jump to the message',
+			translateClickHere: typeof options.translateClickHere === 'function' ? options.translateClickHere : (msg) => (options.translateClickHere ? options.translateClickHere : 'Jump to the message'),
 		};
 
 		this._init();
