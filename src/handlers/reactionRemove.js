@@ -9,6 +9,9 @@ module.exports = async (manager, emoji, message, user) => {
 	if (!starChannel) return;
 
 	if(emoji !== data.options.emoji || user.bot) return;
+	if(!data.options.allowNsfw && message.channel.nsfw) return;
+	if (message.author.id === user.id && !data.options.selfStar) return;
+	if (message.author.bot && !data.options.starBotMsg) return;
 
 	manager.emit('starboardReactionRemove', emoji, message, user);
 
