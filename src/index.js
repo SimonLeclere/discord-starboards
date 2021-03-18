@@ -110,6 +110,9 @@ class StarboardsManager extends EventEmitter {
 
 		const starboard = new Starboard(channel.id, channel.guild.id, this._mergeOptions(options), this);
 
+		const match = starboard.options.emoji.match(/\d+/g);
+		if(match) starboard.options.emoji = match.pop();
+
 		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
 
 		this.starboards.push(starboard);
@@ -128,6 +131,10 @@ class StarboardsManager extends EventEmitter {
      * manager.delete(message.channel.id)
      */
 	delete(channelID, emoji) {
+
+		const match = emoji.match(/\d+/g);
+		if(match) emoji = match.pop();
+
 		const data = this.starboards.find(channelData => channelData.channelID === channelID && channelData.options.emoji === emoji);
 		if(!data) throw new Error(`The channel "${channelID}" is not a starboard`);
 
