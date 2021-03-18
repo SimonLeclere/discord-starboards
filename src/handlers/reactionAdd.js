@@ -30,20 +30,23 @@ module.exports = async (manager, emoji, message, user) => {
 	if(reaction && reaction.count < data.options.threshold) return;
 
 	const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
-	const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.startsWith(data.options.emoji) && m.embeds[0].footer.text.endsWith(message.id));
+	const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.endsWith(message.id) && m.author.id === manager.client.user.id);
 
 	if (starMessage) {
-		const regex = new RegExp(`^${data.options.emoji}\\s([0-9]{1,3})\\s\\|\\s([0-9]{17,20})`);
+
+		const regex = new RegExp(`^(${data.options.emoji}|" ")?\\s?([0-9]{1,3})\\s\\|\\s([0-9]{17,20})`);
 		const stars = regex.exec(starMessage.embeds[0].footer.text);
 		const foundStar = starMessage.embeds[0];
 		const image = foundStar.image && foundStar.image.url || '';
-		const count = reaction && reaction.count ? reaction.count : parseInt(stars[1]) + 1;
+		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
+		const count = reaction && reaction.count ? reaction.count : parseInt(stars[2]) + 1;
+
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color, count) || foundStar.color)
 			.setDescription(foundStar.description || '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter(`${data.options.emoji} ${count} | ${message.id}`)
+			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${count} | ${message.id}`, footerUrl)
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
@@ -87,12 +90,13 @@ module.exports = async (manager, emoji, message, user) => {
 
 		if (image === '' && content === '') return manager.emit('starboardNoEmptyMsg', emoji, message, user);
 
+		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
 			.setDescription(content !== '' ? `${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})` : '')
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter(`${data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`)
+			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
 			.setImage(image);
 		starChannel.send({ embed: starEmbed });
 		manager.emit('starboardReactionAdd', emoji, message, user);
