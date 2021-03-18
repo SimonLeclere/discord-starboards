@@ -11,7 +11,7 @@ The `manager.create()` method takes as second argument an optional object. This 
 Type : `String` or `null` <br>
 Default value : `'⭐'`
 
-This option allows you to customize the emoji you need to react with to get a message into the starboard. The emoji will then also be changed on the embeds.
+This option allows you to customize the emoji you need to react with to get a message into the starboard. The emoji will then also be changed on the embeds. You can use a custom emoji by using the syntax `<:name:id>` or by specifying only its id.
 
 ```js
 client.starboardsManager.create(message.channel, {
