@@ -19,7 +19,7 @@ exports.StarBoardCreateDefaultsOptions = {
 	starEmbed: true,
 	resolveImageUrl: true,
 	attachments: true,
-	threshold: 1,
+	threshold: 3,
 	color: '#f1c40f',
 	allowNsfw: false,
 };
