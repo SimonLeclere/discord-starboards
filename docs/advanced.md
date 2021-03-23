@@ -133,6 +133,19 @@ client.starboardsManager.create(message.channel, {
 });
 ```
 
+### • options.ignoredChannels
+
+Type : `[String]` <br>
+Default value : `false`
+
+This option allows you to ignore reactions to messages from certain channels. No messages from these channels will be able to enter the starboard.
+
+```js
+client.starboardsManager.create(message.channel, {
+    ignoredChannels: ['782309843703693334'],
+});
+```
+
 ## Edit a starboard
 
 The module has a `manager.edit()` method to edit a Starboard. It takes as argument a channel id, an emoji and an object containing the options to be modified. You can edit all options but not the `channelID` or `guildID` attributes.
