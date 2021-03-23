@@ -6,7 +6,7 @@ module.exports = async (manager, emoji, message, user) => {
 	if(!data) return;
 
 	const starChannel = manager.client.channels.cache.get(data.channelID);
-	if (!starChannel) return;
+	if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 	if(emoji !== data.options.emoji || user.bot) return;
 	if(!data.options.allowNsfw && message.channel.nsfw) return;

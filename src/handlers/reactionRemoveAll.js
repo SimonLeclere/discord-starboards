@@ -10,7 +10,7 @@ module.exports = async (manager, message) => {
 	starboards.forEach(async data => {
 
 		const starChannel = manager.client.channels.cache.get(data.channelID);
-		if (!starChannel) return;
+		if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
 		const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.endsWith(message.id) && m.author.id === manager.client.user.id);

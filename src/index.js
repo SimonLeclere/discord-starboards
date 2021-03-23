@@ -93,6 +93,7 @@ class StarboardsManager extends EventEmitter {
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options.color ? options.color : this.defaultsOptions.color,
 			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
+			ignoredChannels: options.ignoredChannels ? options.ignoredChannels : [],
 		};
 	}
 

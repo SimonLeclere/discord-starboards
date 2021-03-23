@@ -7,7 +7,7 @@ module.exports = async (manager, emoji, message, user) => {
 	if(!data) return;
 
 	const starChannel = manager.client.channels.cache.get(data.channelID);
-	if (!starChannel) return;
+	if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 	if(emoji !== data.options.emoji || user.bot) return;
 
@@ -16,12 +16,12 @@ module.exports = async (manager, emoji, message, user) => {
 		return manager.emit('starboardReactionNsfw', emoji, message, user);
 	}
 
-	if (message.author.id === user.id && !data.options.selfStar) {
+	if (!data.options.selfStar && message.author.id === user.id) {
 		message.reactions.resolve(emoji).users.remove(user.id);
 		return manager.emit('starboardNoSelfStar', emoji, message, user);
 	}
 
-	if (message.author.bot && !data.options.starBotMsg) {
+	if (!data.options.starBotMsg && message.author.bot) {
 		message.reactions.resolve(emoji).users.remove(user.id);
 		return manager.emit('starboardNoStarBot', emoji, message, user);
 	}
