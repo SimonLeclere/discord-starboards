@@ -146,6 +146,19 @@ client.starboardsManager.create(message.channel, {
 });
 ```
 
+### • options.handleMessageDelete
+
+Type : `Boolean` or `null` <br>
+Default value : `false`
+
+This option allows you to remove a message from the starboard when it is deleted.
+
+```js
+client.starboardsManager.create(message.channel, {
+    handleMessageDelete: true, // Or false
+});
+```
+
 ## Edit a starboard
 
 The module has a `manager.edit()` method to edit a Starboard. It takes as argument a channel id, an emoji and an object containing the options to be modified. You can edit all options but not the `channelID` or `guildID` attributes.
