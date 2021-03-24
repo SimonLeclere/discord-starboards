@@ -31,6 +31,7 @@ declare module "discord-starboards" {
 		color: string | ColorOptions;
 		allowNsfw: boolean;
 		ignoredChannels: [DJS.Snowflake];
+		handleMessageDelete: boolean;
     }
   
     export interface StarboardEvents {

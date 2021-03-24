@@ -9,6 +9,7 @@ const existsAsync = promisify(exists);
 const readFileAsync = promisify(readFile);
 
 const handleRaw = require('./handlers/raw');
+const handleMsgDelete = require('./handlers/messageDelete');
 
 const { StarBoardCreateDefaultsOptions } = require('./constants');
 const Starboard = require('./bases/Starboard');
@@ -60,8 +61,8 @@ class StarboardsManager extends EventEmitter {
 			const channelData = this.starboards.find(data => data.channelID === channel.id);
 			if (channelData) return this.delete(channelData.channelID);
 		});
-
 		this.client.on('raw', packet => handleRaw(this, packet));
+		this.client.on('messageDelete', message => handleMsgDelete(this, message));
 
 	}
 
@@ -94,6 +95,7 @@ class StarboardsManager extends EventEmitter {
 			color: options.color ? options.color : this.defaultsOptions.color,
 			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
 			ignoredChannels: options.ignoredChannels ? options.ignoredChannels : [],
+			handleMessageDelete: options.handleMessageDelete ? options.handleMessageDelete : false,
 		};
 	}
 
