@@ -1,5 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 module.exports = async (manager, emoji, message, user) => {
 
@@ -79,11 +80,21 @@ module.exports = async (manager, emoji, message, user) => {
 		if(image === '' && data.options.resolveImageUrl) {
 			const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 			let url = content.match(regex);
-			if(url) {
+			if(/https?:\/\/tenor.com\/view\/[^ ]*/.test(url)) {
+				const response = await axios.get(url[0]).catch(() => null);
+				if(response) {
+					const $ = cheerio.load(response.data);
+					const src = $('meta[property="og:url"]', 'head').attr('content');
+					if(src) image = src;
+				}
+			}
+			else if(url) {
 				url = url[0];
-				const response = await axios.get(url);
-				const mimeType = response.headers['content-type'];
-				if(mimeType.startsWith('image/')) image = url;
+				const response = await axios.get(url).catch(() => null);
+				if(response) {
+					const mimeType = response.headers['content-type'];
+					if(mimeType.startsWith('image/')) image = url;
+				}
 			}
 		}
 
