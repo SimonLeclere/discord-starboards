@@ -84,6 +84,8 @@ class StarboardsManager extends EventEmitter {
 	_mergeOptions(options) {
 		if(!options) return this.defaultsOptions;
 
+		if(options.threshold && typeof options.threshold === 'string') options.threshold = parseInt(options.threshold, 10);
+
 		return {
 			emoji: typeof options.emoji === 'string' ? options.emoji : this.defaultsOptions.emoji,
 			starBotMsg: typeof options.starBotMsg === 'boolean' ? options.starBotMsg : this.defaultsOptions.starBotMsg,
