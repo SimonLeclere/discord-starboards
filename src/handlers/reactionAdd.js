@@ -104,7 +104,7 @@ module.exports = async (manager, emoji, message, user) => {
 		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
-			.setDescription(content !== '' ? `${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})` : '')
+			.setDescription(`${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})`)
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
