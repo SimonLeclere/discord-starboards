@@ -27,7 +27,7 @@ declare module "discord-starboards" {
 		starEmbed: boolean;
 		resolveImageUrl: boolean;
 		attachments: boolean;
-		threshold: number;
+		threshold: number | string;
 		color: string | ColorOptions;
 		allowNsfw: boolean;
 		ignoredChannels: [DJS.Snowflake];
