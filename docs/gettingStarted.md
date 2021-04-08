@@ -53,7 +53,7 @@ let onServer = client.starboardsManager.starboards.filter((s) => s.guildID === m
 
 A starboard can be uniquely identified by its channel id and emoji.
 ```js
-let starboard = client.starboardsManager.starboards.find(s => s.channelID === message.guild.id && s.options.emoji === '⭐');
+let starboard = client.starboardsManager.starboards.find(s => s.channelID === message.channel.id && s.options.emoji === '⭐');
 ```
 
 ## Get the leaderboard of a server
