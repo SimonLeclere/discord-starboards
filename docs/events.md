@@ -130,7 +130,7 @@ This event is emitted when a starboard is modified.
 The callback function is invoked with the old starboard and the new starboard as arguments.
 
 ```js
-manager.on('starboardEdited', (old, new) => {
-     message.channel.send(`Starboard (channel ${new.channelID}) edited !`)
+manager.on('starboardEdited', (oldStarboard, newStarboard) => {
+     message.channel.send(`Starboard (channel ${newStarboard.channelID}) edited !`)
 });
 ```
