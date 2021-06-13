@@ -104,11 +104,11 @@ module.exports = async (manager, emoji, message, user) => {
 		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
-			.setDescription(`${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})`)
+			.setDescription(`${content}\n${image === 'attachment' ? '[attachment]\n' : ''}\n[${manager.options.translateClickHere(message)}](${message.url})`)
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
-			.setImage(image);
+			.setImage(image !== 'attachment' ? image: '');
 		starChannel.send({ embed: starEmbed });
 		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
@@ -119,7 +119,7 @@ function extension(attachment) {
 	const imageLink = attachment.split('.');
 	const typeOfImage = imageLink[imageLink.length - 1];
 	const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
-	if (!image) return '';
+	if (!image) return 'attachment';
 	return attachment;
 }
 
