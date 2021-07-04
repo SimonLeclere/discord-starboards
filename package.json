@@ -1,5 +1,5 @@
 {
-  "name": "@casper124578/discord-starboards",
+  "name": "discord-starboards",
   "version": "3.0.0-alpha",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
   "main": "src/index.js",
