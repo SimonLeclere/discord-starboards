@@ -4,11 +4,11 @@ The first step is to initialize the module.
 You need to pass a Discord client as a parameter and an optional object containing the options.
 
 ```js
-const Discord = require('discord.js');
+const Discord = require("discord.js");
 const client = new Discord.Client();
 
 // Requires Manager from discord-starboards
-const StarboardsManager = require('discord-starboards');
+const StarboardsManager = require("discord-starboards");
 
 // Initialise it
 const manager = new StarboardsManager(client);
@@ -34,7 +34,7 @@ After that, the starboard is automatically saved in the database and will contin
 You can delete a starboard using the delete() method. This method takes as parameter a discord channel id and an emoji. These two elements are used to uniquely identify a starboard.
 
 ```js
-client.starboardsManager.delete(message.channel.id, '⭐');
+client.starboardsManager.delete(message.channel.id, "⭐");
 ```
 
 Warning: This method permanently removes the starboard from the database.
@@ -42,18 +42,23 @@ Warning: This method permanently removes the starboard from the database.
 ## Fetch starboards
 
 To get a list of all starboards managed by the module, you can use the "starboards" property of the manager.
+
 ```js
 let allStarboards = client.starboardsManager.starboards; // returns an array of starboards
 ```
 
-To get all the starboards of a server, you can simply filter the starboards by `guildID`.
+To get all the starboards of a server, you can simply filter the starboards by `guildId`.
+
 ```js
-let onServer = client.starboardsManager.starboards.filter((s) => s.guildID === message.guild.id);
+let onServer = client.starboardsManager.starboards.filter((s) => s.guildId === message.guild.id);
 ```
 
 A starboard can be uniquely identified by its channel id and emoji.
+
 ```js
-let starboard = client.starboardsManager.starboards.find(s => s.channelID === message.channel.id && s.options.emoji === '⭐');
+let starboard = client.starboardsManager.starboards.find(
+  (s) => s.channelId === message.channel.id && s.options.emoji === "⭐",
+);
 ```
 
 ## Get the leaderboard of a server
@@ -63,16 +68,23 @@ The Starboard class has a leaderboard() method which allows to return an array c
 So to get the leaderboard of a starboard, you must first fetch the starboard and then use the leaderboard() method.
 
 ```js
-const starboard = client.starboardsManager.starboards.find(s => s.guildID === message.guild.id && s.options.emoji === '⭐')
-if(!starboard) return message.channel.send('No starboard found.');
+const starboard = client.starboardsManager.starboards.find(
+  (s) => s.guildId === message.guild.id && s.options.emoji === "⭐",
+);
+if (!starboard) return message.channel.send("No starboard found.");
 
 const lb = await starboard.leaderboard();
 
-const content = lb.map((m, i) => `**${i+1}.**     ${m.stars} ⭐  -  ${m.embeds[0].description || `[Image](${m.embeds[0].image.url})`}`);
+const content = lb.map(
+  (m, i) =>
+    `**${i + 1}.**     ${m.stars} ⭐  -  ${
+      m.embeds[0].description || `[Image](${m.embeds[0].image.url})`
+    }`,
+);
 
 const leaderboard = new Discord.MessageEmbed()
-    .setTitle(`${message.guild.name}'s starboard`)
-    .setDescription(content.join('\n'))
+  .setTitle(`${message.guild.name}'s starboard`)
+  .setDescription(content.join("\n"));
 
 message.channel.send(leaderboard);
 ```
@@ -80,6 +92,7 @@ message.channel.send(leaderboard);
 ## Conclusion
 
 Now that you know how to use the basics of the module, I strongly recommend that you read the following sections:
+
 - [Events](events.md)
 - [Custom database](customDatabase.md)
 - [Advanced Usage](advanced.md)

@@ -10,9 +10,9 @@ This event is emitted when a starboard is created. It can be used to send a conf
 The callback function is invoked with the new starboard as argument.
 
 ```js
-manager.on('starboardCreate', (data) => {
-    const channel = client.channels.cache.get(data.channelID);
-    channel.send(`This channel is now a starboard!`);
+manager.on("starboardCreate", (data) => {
+  const channel = client.channels.cache.get(data.channelId);
+  channel.send(`This channel is now a starboard!`);
 });
 ```
 
@@ -24,9 +24,9 @@ This event is emitted when a starboard is deleted or when the channel of this st
 The callback function is invoked with the deleted starboard as argument.
 
 ```js
-manager.on('starboardDelete', (data) => {
-    const channel = client.channels.cache.get(data.channelID);
-    if (channel) channel.send(`Starboard deleted ! ChannelID: ${data.channelID}`);
+manager.on("starboardDelete", (data) => {
+  const channel = client.channels.cache.get(data.channelId);
+  if (channel) channel.send(`Starboard deleted ! ChannelID: ${data.channelId}`);
 });
 ```
 
@@ -38,8 +38,8 @@ This event is emitted when a user reacts to a message eligible for the starboard
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardReactionAdd', (emoji, message, user) => {
-    console.log(`${user.username} reacted to a message with ${emoji} (message id: ${message.id}).`);
+manager.on("starboardReactionAdd", (emoji, message, user) => {
+  console.log(`${user.username} reacted to a message with ${emoji} (message id: ${message.id}).`);
 });
 ```
 
@@ -51,8 +51,8 @@ Like the `starboardReactionAdd` event, this event is emitted when a user removes
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardReactionRemove', (emoji, message, user) => {
-     console.log(`${user.username} remove his reaction (${emoji}) to a message (id: ${message.id}).`)
+manager.on("starboardReactionRemove", (emoji, message, user) => {
+  console.log(`${user.username} remove his reaction (${emoji}) to a message (id: ${message.id}).`);
 });
 ```
 
@@ -64,8 +64,8 @@ This event is emitted when all reactions of a message are deleted at once.
 The callback function is invoked with the message as argument.
 
 ```js
-manager.on('starboardReactionRemoveAll', (message) => {
-     console.log(`The reactions of the message with id ${message.id} have all been removed.`)
+manager.on("starboardReactionRemoveAll", (message) => {
+  console.log(`The reactions of the message with id ${message.id} have all been removed.`);
 });
 ```
 
@@ -75,8 +75,10 @@ This event is emitted when a user reacts to a message in an nsfw channel whereas
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardReactionNsfw', (emoji, message, user) => {
-    message.channel.send(`${user.username}, you cannot add messages from an nsfw channel to the starboard.`)
+manager.on("starboardReactionNsfw", (emoji, message, user) => {
+  message.channel.send(
+    `${user.username}, you cannot add messages from an nsfw channel to the starboard.`,
+  );
 });
 ```
 
@@ -86,8 +88,8 @@ This event is emitted when a user reacts to a message whereas the starboard corr
 The callback function is invoked with the emoji, the post and the user as arguments.
 
 ```js
-manager.on('starboardNoSelfStar', (emoji, message, user) => {
-    message.channel.send(`${user.username}, you cannot star your own messages.`)
+manager.on("starboardNoSelfStar", (emoji, message, user) => {
+  message.channel.send(`${user.username}, you cannot star your own messages.`);
 });
 ```
 
@@ -97,8 +99,8 @@ This event is emitted when a user reacts to a bot message whereas the starboard 
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardNoStarBot', (emoji, message, user) => {
-    message.channel.send(`${user.username}, you cannot star bot messages.`)
+manager.on("starboardNoStarBot", (emoji, message, user) => {
+  message.channel.send(`${user.username}, you cannot star bot messages.`);
 });
 ```
 
@@ -108,8 +110,8 @@ This event is emitted when a user reacts to a starboard embed.
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardAlreadyStarred', (emoji, message, user) => {
-    message.channel.send(`${user.username}, this message is already in the starboard.`)
+manager.on("starboardAlreadyStarred", (emoji, message, user) => {
+  message.channel.send(`${user.username}, this message is already in the starboard.`);
 });
 ```
 
@@ -119,8 +121,8 @@ This event is emitted when a user reacts to a message that has no exploitable co
 The callback function is invoked with the emoji, the message and the user as arguments.
 
 ```js
-manager.on('starboardNoEmptyMsg', (emoji, message, user) => {
-    message.channel.send(`${user.username}, you cannot star an empty message.`)
+manager.on("starboardNoEmptyMsg", (emoji, message, user) => {
+  message.channel.send(`${user.username}, you cannot star an empty message.`);
 });
 ```
 
@@ -130,7 +132,7 @@ This event is emitted when a starboard is modified.
 The callback function is invoked with the old starboard and the new starboard as arguments.
 
 ```js
-manager.on('starboardEdited', (oldStarboard, newStarboard) => {
-     message.channel.send(`Starboard (channel ${newStarboard.channelID}) edited !`)
+manager.on("starboardEdited", (oldStarboard, newStarboard) => {
+  message.channel.send(`Starboard (channel ${newStarboard.channelId}) edited !`);
 });
 ```

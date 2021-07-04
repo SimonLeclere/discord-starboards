@@ -1,25 +1,23 @@
 const cloneDeep = require('lodash.clonedeep');
 
 class Starboard {
-	constructor(channelID, guildID, options, manager) {
-		this.channelID = channelID;
-		this.guildID = guildID;
+	constructor(channelId, guildId, options, manager) {
+		this.channelId = channelId;
+		this.guildId = guildId;
 		this.options = options;
 		this.manager = manager;
 	}
 
 	/**
 	 * Gets the top of the most starred messages of this leaderboard
-	 * @param {Discord.Snowflake} guildID
-	 * @param {String} emoji
 	 * @param {Number} count
 	 */
 	async leaderboard(count = 10) {
-		const data = this.manager.starboards.find(s => s.guildID === this.guildID && s.options.emoji === this.options.emoji);
+		const data = this.manager.starboards.find(s => s.guildId === this.guildId && s.options.emoji === this.options.emoji);
 		if(!data) throw new Error('No starboard found for the parameters provided');
 
-		const starChannel = this.manager.client.channels.cache.get(data.channelID);
-		if (!starChannel) throw new Error(`The channel with id ${data.channelID} no longer exists or is not in the cache.`);
+		const starChannel = this.manager.client.channels.cache.get(data.channelId);
+		if (!starChannel) throw new Error(`The channel with id ${data.channelId} no longer exists or is not in the cache.`);
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
 
@@ -53,7 +51,7 @@ class Starboard {
 			}
 
 			// Call the db method
-			await this.manager.editStarboard(this.channelID, emoji, this.toObject());
+			await this.manager.editStarboard(this.channelId, emoji, this.toObject());
 			resolve(this);
 		});
 	}
@@ -65,8 +63,8 @@ class Starboard {
 	 */
 	toObject() {
 		return cloneDeep({
-			channelID: this.channelID,
-			guildID: this.guildID,
+			channelId: this.channelId,
+			guildId: this.guildId,
 			options: this.options,
 		});
 	}

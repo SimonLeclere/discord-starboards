@@ -1,20 +1,20 @@
 declare module "discord-starboards" {
     import { EventEmitter } from "events";
     import * as DJS from "discord.js";
-  
+
     export type TranslateClick = (msg: DJS.Message) => void;
-  
+
     export interface StarboardOptions {
 		storage?: string | boolean;
 		translateClickHere?: string | TranslateClick;
     }
-  
+
     export interface Starboard {
-		channelID: string;
-		guildID: string;
+		channelId: string;
+		guildId: string;
 		options: StarboardDefaultCreateOptions;
     }
-  
+
     export interface ColorOptions {
 		colors: DJS.ColorResolvable[];
 		max: number;
@@ -33,7 +33,7 @@ declare module "discord-starboards" {
 		ignoredChannels: [DJS.Snowflake];
 		handleMessageDelete: boolean;
     }
-  
+
     export interface StarboardEvents {
     	starboardCreate: [Starboard];
     	starboardDelete: [Starboard];
@@ -47,36 +47,36 @@ declare module "discord-starboards" {
       	starboardNoEmptyMsg: [string, DJS.Message, DJS.User];
       	starboardEdited: [Starboard, Starboard];
     }
-  
+
     export default class StarboardManager extends EventEmitter {
 		constructor(client: DJS.Client, options?: StarboardOptions);
-	
+
 		public options: StarboardOptions;
 		public defaultOptions: StarboardDefaultCreateOptions;
 		public client: DJS.Client;
 		public starboards: Starboard[];
-	
+
 		public create(
 			channel: DJS.Channel,
 			options?: Partial<StarboardDefaultCreateOptions>
 		): Promise<boolean>;
-	
+
 		public edit(
-			channelID: DJS.Snowflake,
+			channelId: DJS.Snowflake,
 			emoji: string,
 			data: Partial<StarboardDefaultCreateOptions>
 		): Promise<Starboard | undefined>;
-	
-		public delete(channelID: DJS.Snowflake, emoji: string): Promise<boolean>;
+
+		public delete(channelId: DJS.Snowflake, emoji: string): Promise<boolean>;
 		public getAllStarboards(): Promise<Starboard[] | undefined>;
-		public deleteStarboard(channelID: DJS.Snowflake, emoji: string): Promise<boolean | void>;
+		public deleteStarboard(channelId: DJS.Snowflake, emoji: string): Promise<boolean | void>;
 		public saveStarboard(data: Starboard): Promise<boolean | void>;
 		public editStarboard(
-			channelID: DJS.Snowflake,
+			channelId: DJS.Snowflake,
 			emoji: string,
 			data: Partial<StarboardDefaultCreateOptions>
 		): Promise<boolean | void>;
-	
+
 		public on<E extends keyof StarboardEvents>(
 			event: E,
 			listener: (...args: StarboardEvents[E]) => void
@@ -89,14 +89,14 @@ declare module "discord-starboards" {
     }
 
     export class Starboard {
-		public channelID: DJS.Snowflake;
-		public guildID: DJS.Snowflake;
+		public channelId: DJS.Snowflake;
+		public guildId: DJS.Snowflake;
 		public options: StarboardDefaultCreateOptions;
 		public manager: StarboardManager;
 
 		constructor(
-			channelID: DJS.Snowflake,
-			guildID: DJS.Snowflake,
+			channelId: DJS.Snowflake,
+			guildId: DJS.Snowflake,
 			options: StarboardDefaultCreateOptions,
 			manager: StarboardManager
 		);

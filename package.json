@@ -1,20 +1,21 @@
 {
-  "name": "discord-starboards",
-  "version": "2.2.3",
+  "name": "@casper124578/discord-starboards",
+  "version": "3.0.0-alpha",
   "description": "⭐ Complete framework to facilitate the creation of starboards using discord.js",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "eslint --fix . --ext .js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^7.16.0"
+    "eslint": "^7.30.0"
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "cheerio": "^1.0.0-rc.5",
-    "discord.js": "^12.5.1",
+    "cheerio": "^1.0.0-rc.10",
+    "discord.js": "github:discordjs/discord.js",
     "lodash.clonedeep": "^4.5.0"
   },
   "repository": {

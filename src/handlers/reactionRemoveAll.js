@@ -2,14 +2,14 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = async (manager, message) => {
 
-	const starboards = manager.starboards.filter(channelData => channelData.guildID === message.guild.id);
+	const starboards = manager.starboards.filter(channelData => channelData.guildId === message.guild.id);
 	if(!starboards) return;
 
 	manager.emit('starboardReactionRemoveAll', message);
 
 	starboards.forEach(async data => {
 
-		const starChannel = manager.client.channels.cache.get(data.channelID);
+		const starChannel = manager.client.channels.cache.get(data.channelId);
 		if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
@@ -25,8 +25,14 @@ module.exports = async (manager, message) => {
 				.setFooter(`${data.options.emoji} 0 | ${message.id}`)
 				.setImage(image);
 			const starMsg = await starChannel.messages.fetch(starMessage.id);
-			await starMsg.edit({ embed: starEmbed });
-			return starMsg.delete({ timeout: 1000 });
+			await starMsg.edit({ embeds: [starEmbed] });
+
+			setTimeout(() => {
+				starMsg.delete();
+			}, 1000);
+
+
+			return starMsg;
 		}
 
 	});

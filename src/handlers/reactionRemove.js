@@ -2,10 +2,10 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = async (manager, emoji, message, user) => {
 
-	const data = manager.starboards.find(channelData => channelData.guildID === message.guild.id && channelData.options.emoji === emoji);
+	const data = manager.starboards.find(channelData => channelData.guildId === message.guild.id && channelData.options.emoji === emoji);
 	if(!data) return;
 
-	const starChannel = manager.client.channels.cache.get(data.channelID);
+	const starChannel = manager.client.channels.cache.get(data.channelId);
 	if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 	if(emoji !== data.options.emoji || user.bot) return;
@@ -34,9 +34,15 @@ module.exports = async (manager, emoji, message, user) => {
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
-		await starMsg.edit({ embed: starEmbed }).catch(() => {});
-		// eslint-disable-next-line no-empty-function
-		if(parseInt(stars[2]) - 1 == 0 || reaction && reaction.count < data.options.threshold) return starMsg.delete({ timeout: 1000 }).catch(() => {});
+		await starMsg.edit({ embeds: [starEmbed] }).catch(() => {});
+		if(parseInt(stars[2]) - 1 == 0 || reaction && reaction.count < data.options.threshold) {
+			setTimeout(() => {
+				// eslint-disable-next-line no-empty-function
+				starMsg.delete().catch(() => {});
+			}, 1000);
+
+			return starMsg;
+		}
 	}
 
 };
