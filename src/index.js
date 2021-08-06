@@ -9,6 +9,7 @@ const existsAsync = promisify(exists);
 const readFileAsync = promisify(readFile);
 
 const handleRaw = require('./handlers/raw');
+const handleMsgDelete = require('./handlers/messageDelete');
 
 const { StarBoardCreateDefaultsOptions } = require('./constants');
 const Starboard = require('./bases/Starboard');
@@ -57,11 +58,11 @@ class StarboardsManager extends EventEmitter {
 		this._init();
 
 		this.client.on('channelDelete', channel => {
-			const channelData = this.starboards.find(data => data.channelID === channel.id);
-			if (channelData) return this.delete(channelData.channelID);
+			const channelData = this.starboards.find(data => data.channelId === channel.id);
+			if (channelData) return this.delete(channelData.channelId);
 		});
-
 		this.client.on('raw', packet => handleRaw(this, packet));
+		this.client.on('messageDelete', message => handleMsgDelete(this, message));
 
 	}
 
@@ -72,7 +73,7 @@ class StarboardsManager extends EventEmitter {
      */
 	async _init() {
 		const allStarboards = await this.getAllStarboards();
-		this.starboards = allStarboards.map(s => new Starboard(s.channelID, s.guildID, s.options, this));
+		this.starboards = allStarboards.map(s => new Starboard(s.channelId, s.guildId, s.options, this));
 	}
 
 	/**
@@ -82,6 +83,8 @@ class StarboardsManager extends EventEmitter {
      */
 	_mergeOptions(options) {
 		if(!options) return this.defaultsOptions;
+
+		if(options.threshold && typeof options.threshold === 'string') options.threshold = parseInt(options.threshold, 10);
 
 		return {
 			emoji: typeof options.emoji === 'string' ? options.emoji : this.defaultsOptions.emoji,
@@ -93,6 +96,8 @@ class StarboardsManager extends EventEmitter {
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options.color ? options.color : this.defaultsOptions.color,
 			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
+			ignoredChannels: options.ignoredChannels ? options.ignoredChannels : [],
+			handleMessageDelete: options.handleMessageDelete ? options.handleMessageDelete : false,
 		};
 	}
 
@@ -113,7 +118,7 @@ class StarboardsManager extends EventEmitter {
 		const match = starboard.options.emoji.match(/\d+/g);
 		if(match) starboard.options.emoji = match.pop();
 
-		if(this.starboards.find(data => data.channelID === starboard.channelID && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
+		if(this.starboards.find(data => data.channelId === starboard.channelId && data.options.emoji === starboard.options.emoji)) throw new Error('There is already a starboard in this channel with the same emoji');
 
 		this.starboards.push(starboard);
 		this.saveStarboard(starboard.toObject());
@@ -124,23 +129,23 @@ class StarboardsManager extends EventEmitter {
 	}
 
 	/**
-     * Delete a starboard by its guildID
-     * @param {Discord.Snowflake} guildID
+     * Delete a starboard by its guildId
+     * @param {Discord.Snowflake} guildId
 	 * @param {String} emoji
      * @example
      * manager.delete(message.channel.id)
      */
-	delete(channelID, emoji) {
+	delete(channelId, emoji) {
 
 		const match = emoji.match(/\d+/g);
 		if(match) emoji = match.pop();
 
-		const data = this.starboards.find(channelData => channelData.channelID === channelID && channelData.options.emoji === emoji);
-		if(!data) throw new Error(`The channel "${channelID}" is not a starboard`);
+		const data = this.starboards.find(channelData => channelData.channelId === channelId && channelData.options.emoji === emoji);
+		if(!data) throw new Error(`The channel "${channelId}" is not a starboard`);
 
-		this.starboards = this.starboards.filter(channelData => !(channelData.channelID === channelID && channelData.options.emoji === emoji));
+		this.starboards = this.starboards.filter(channelData => !(channelData.channelId === channelId && channelData.options.emoji === emoji));
 
-		this.deleteStarboard(channelID, emoji);
+		this.deleteStarboard(channelId, emoji);
 
 		this.emit('starboardDelete', data);
 
@@ -149,14 +154,14 @@ class StarboardsManager extends EventEmitter {
 
 	/**
 	 * Edit a starboard
-	 * @param {Discord.Snowflake} channelID
+	 * @param {Discord.Snowflake} channelId
 	 * @param {String} emoji
 	 * @param {StarBoardCreateDefaultsOptions} data
 	 * @returns {Promise<Starboard>}
 	 */
-	edit(channelID, emoji, data) {
+	edit(channelId, emoji, data) {
 		return new Promise((resolve, reject) => {
-			const starboard = this.starboards.find((g) => g.channelID === channelID && g.options.emoji === emoji);
+			const starboard = this.starboards.find((g) => g.channelId === channelId && g.options.emoji === emoji);
 			if (!starboard) {
 				return reject('No Starboard found.');
 			}
@@ -207,16 +212,16 @@ class StarboardsManager extends EventEmitter {
 
 	/**
      * Delete a starboard of the database
-     * @param {Discord.Snowflake} channelID
+     * @param {Discord.Snowflake} channelId
 	 * @param {String} emoji
      */
-	async deleteStarboard(channelID, emoji) {
+	async deleteStarboard(channelId, emoji) {
 		await writeFileAsync(
 			this.options.storage,
 			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
-					channelID: e.channelID,
-					guildID: e.guildID,
+					channelId: e.channelId,
+					guildId: e.guildId,
 					options: e.options,
 				};
 			}))),
@@ -234,8 +239,8 @@ class StarboardsManager extends EventEmitter {
 			this.options.storage,
 			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
-					channelID: e.channelID,
-					guildID: e.guildID,
+					channelId: e.channelId,
+					guildId: e.guildId,
 					options: e.options,
 				};
 			}))),
@@ -248,13 +253,13 @@ class StarboardsManager extends EventEmitter {
      * Edit a starboard in the database
      * @param {object} data
      */
-	async editStarboard(channelID, emoji, data) {
+	async editStarboard(channelId, emoji, data) {
 		await writeFileAsync(
 			this.options.storage,
 			JSON.stringify(Array.from(this.starboards.map(e => {
 				return {
-					channelID: e.channelID,
-					guildID: e.guildID,
+					channelId: e.channelId,
+					guildId: e.guildId,
 					options: e.options,
 				};
 			}))),
@@ -273,7 +278,7 @@ class StarboardsManager extends EventEmitter {
  * @example
  * // This can be used to add features such as a log message
  * manager.on('starboardCreate', (data) => {
- *     console.log(`New starboard ! ChannelID: ${data.channelID}`);
+ *     console.log(`New starboard ! ChannelID: ${data.channelId}`);
  * });
  */
 
@@ -285,7 +290,7 @@ class StarboardsManager extends EventEmitter {
  * @example
  * // This can be used to add features such as a log message
  * manager.on('starboardDelete', (data) => {
- *     console.log(`Starboard deleted ! ChannelID: ${data.channelID}`);
+ *     console.log(`Starboard deleted ! ChannelID: ${data.channelId}`);
  * });
 */
 
@@ -390,7 +395,7 @@ class StarboardsManager extends EventEmitter {
  * @param {Starboard} old The old starboard
  * @param {Starboard} new The new starboard
  * manager.on('starboardEdited', data => {
- *      message.channel.send(`Starboard (channel ${data.channelID}) edited !`)
+ *      message.channel.send(`Starboard (channel ${data.channelId}) edited !`)
  * });
  */
 

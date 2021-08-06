@@ -1,13 +1,14 @@
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
+const cheerio = require('cheerio').default;
 
 module.exports = async (manager, emoji, message, user) => {
 
-	const data = manager.starboards.find(channelData => channelData.guildID === message.guild.id && channelData.options.emoji === emoji);
+	const data = manager.starboards.find(channelData => channelData.guildId === message.guild.id && channelData.options.emoji === emoji);
 	if(!data) return;
 
-	const starChannel = manager.client.channels.cache.get(data.channelID);
-	if (!starChannel) return;
+	const starChannel = manager.client.channels.cache.get(data.channelId);
+	if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
 
 	if(emoji !== data.options.emoji || user.bot) return;
 
@@ -16,12 +17,12 @@ module.exports = async (manager, emoji, message, user) => {
 		return manager.emit('starboardReactionNsfw', emoji, message, user);
 	}
 
-	if (message.author.id === user.id && !data.options.selfStar) {
+	if (!data.options.selfStar && message.author.id === user.id) {
 		message.reactions.resolve(emoji).users.remove(user.id);
 		return manager.emit('starboardNoSelfStar', emoji, message, user);
 	}
 
-	if (message.author.bot && !data.options.starBotMsg) {
+	if (!data.options.starBotMsg && message.author.bot) {
 		message.reactions.resolve(emoji).users.remove(user.id);
 		return manager.emit('starboardNoStarBot', emoji, message, user);
 	}
@@ -50,7 +51,7 @@ module.exports = async (manager, emoji, message, user) => {
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
-		await starMsg.edit({ embed: starEmbed }).catch(() => {});
+		await starMsg.edit({ embeds: [starEmbed] }).catch(() => {});
 		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
 
@@ -79,11 +80,21 @@ module.exports = async (manager, emoji, message, user) => {
 		if(image === '' && data.options.resolveImageUrl) {
 			const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
 			let url = content.match(regex);
-			if(url) {
+			if(/https?:\/\/tenor.com\/view\/[^ ]*/.test(url)) {
+				const response = await axios.get(url[0]).catch(() => null);
+				if(response) {
+					const $ = cheerio.load(response.data);
+					const src = $('meta[property="og:url"]', 'head').attr('content');
+					if(src) image = src;
+				}
+			}
+			else if(url) {
 				url = url[0];
-				const response = await axios.get(url);
-				const mimeType = response.headers['content-type'];
-				if(mimeType.startsWith('image/')) image = url;
+				const response = await axios.get(url).catch(() => null);
+				if(response) {
+					const mimeType = response.headers['content-type'];
+					if(mimeType.startsWith('image/')) image = url;
+				}
 			}
 		}
 
@@ -93,12 +104,12 @@ module.exports = async (manager, emoji, message, user) => {
 		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
-			.setDescription(content !== '' ? `${content}\n\n[${manager.options.translateClickHere(message)}](${message.url})` : '')
+			.setDescription(`${content}\n${image === 'attachment' ? '[attachment]\n' : ''}\n[${manager.options.translateClickHere(message)}](${message.url})`)
 			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
 			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
-			.setImage(image);
-		starChannel.send({ embed: starEmbed });
+			.setImage(image !== 'attachment' ? image : '');
+		starChannel.send({ embeds: [starEmbed] });
 		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
 
@@ -108,7 +119,7 @@ function extension(attachment) {
 	const imageLink = attachment.split('.');
 	const typeOfImage = imageLink[imageLink.length - 1];
 	const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
-	if (!image) return '';
+	if (!image) return 'attachment';
 	return attachment;
 }
 

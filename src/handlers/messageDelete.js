@@ -5,12 +5,10 @@ module.exports = async (manager, message) => {
 	const starboards = manager.starboards.filter(channelData => channelData.guildId === message.guild.id);
 	if(!starboards) return;
 
-	manager.emit('starboardReactionRemoveAll', message);
-
 	starboards.forEach(async data => {
 
 		const starChannel = manager.client.channels.cache.get(data.channelId);
-		if (!starChannel || data.options.ignoredChannels.includes(message.channel.id)) return;
+		if (!starChannel || data.options.ignoredChannels.includes(message.channel.id) || !data.options.handleMessageDelete) return;
 
 		const fetchedMessages = await starChannel.messages.fetch({ limit: 100 });
 		const starMessage = fetchedMessages.find(m => m.embeds[0] && m.embeds[0].footer && m.embeds[0].footer.text.endsWith(message.id) && m.author.id === manager.client.user.id);
@@ -29,8 +27,8 @@ module.exports = async (manager, message) => {
 
 			setTimeout(() => {
 				starMsg.delete();
-			}, 1000);
 
+			}, 1000);
 
 			return starMsg;
 		}

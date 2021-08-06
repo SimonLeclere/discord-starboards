@@ -15,7 +15,7 @@ This option allows you to customize the emoji you need to react with to get a me
 
 ```js
 client.starboardsManager.create(message.channel, {
-    emoji: '📍',
+  emoji: "📍",
 });
 ```
 
@@ -30,7 +30,7 @@ This option enables or disables the ability to add bot messages to the starboard
 
 ```js
 client.starboardsManager.create(message.channel, {
-    starBotMsg: false, // Or true
+  starBotMsg: false, // Or true
 });
 ```
 
@@ -43,7 +43,7 @@ This option allows you to define whether or not users can add their own messages
 
 ```js
 client.starboardsManager.create(message.channel, {
-    selfStar: false, // Or true
+  selfStar: false, // Or true
 });
 ```
 
@@ -56,7 +56,7 @@ This option allows you to define whether or not users can add embeds to the star
 
 ```js
 client.starboardsManager.create(message.channel, {
-    starEmbed: false, // Or true
+  starEmbed: false, // Or true
 });
 ```
 
@@ -69,7 +69,7 @@ This option allows you to define whether or not users can star images. If this o
 
 ```js
 client.starboardsManager.create(message.channel, {
-    attachments: true, // Or false
+  attachments: true, // Or false
 });
 ```
 
@@ -82,7 +82,7 @@ This option allows you to set whether urls to images should be resolved to displ
 
 ```js
 client.starboardsManager.create(message.channel, {
-    resolveImageUrl: true, // Or false
+  resolveImageUrl: true, // Or false
 });
 ```
 
@@ -103,7 +103,7 @@ This option allows you to set the number of reactions required for a message to 
 
 ```js
 client.starboardsManager.create(message.channel, {
-    threshold: 3,
+  threshold: 3,
 });
 ```
 
@@ -116,7 +116,7 @@ This option allows you to customize the color of the embeds of the starboard. Yo
 
 ```js
 client.starboardsManager.create(message.channel, {
-    color: 'f3522f',
+  color: "f3522f",
 });
 ```
 
@@ -129,17 +129,44 @@ This option allows you to choose whether or not messages from an NSFW channel ca
 
 ```js
 client.starboardsManager.create(message.channel, {
-    allowNsfw: true, // Or false
+  allowNsfw: true, // Or false
+});
+```
+
+### • options.ignoredChannels
+
+Type : `[String]` <br>
+Default value : `false`
+
+This option allows you to ignore reactions to messages from certain channels. No messages from these channels will be able to enter the starboard.
+
+```js
+client.starboardsManager.create(message.channel, {
+  ignoredChannels: ["782309843703693334"],
+});
+```
+
+### • options.handleMessageDelete
+
+Type : `Boolean` or `null` <br>
+Default value : `false`
+
+This option allows you to remove a message from the starboard when it is deleted.
+
+```js
+client.starboardsManager.create(message.channel, {
+  handleMessageDelete: true, // Or false
 });
 ```
 
 ## Edit a starboard
 
-The module has a `manager.edit()` method to edit a Starboard. It takes as argument a channel id, an emoji and an object containing the options to be modified. You can edit all options but not the `channelID` or `guildID` attributes.
+The module has a `manager.edit()` method to edit a Starboard. It takes as argument a channel id, an emoji and an object containing the options to be modified. You can edit all options but not the `channelId` or `guildId` attributes.
 
 Example :
+
 ```js
-client.starboardsManager.edit(message.channel.id, '⭐', { emoji: '📍' }); // Will change the starboard emoji
+client.starboardsManager.edit(message.channel.id, "⭐", { emoji: "📍" }); // Will change the starboard emoji
 ```
 
 ## Tips and tricks
@@ -149,46 +176,43 @@ Here are some tips and lines of code to use the module properly. Feel free to sh
 ### • Allow only one starboard per server
 
 ```js
-if(client.starboardsManager.starboards.find(s => s.guildID === message.guild.id)) {
-    return message.channel.send('There is already a starboard on this server!');
+if (client.starboardsManager.starboards.find((s) => s.guildId === message.guild.id)) {
+  return message.channel.send("There is already a starboard on this server!");
 }
 ```
 
 ### • Using the starboardEdited event
 
 ```js
-const transform = require('lodash.transform');
-const isEqual = require('lodash.isequal');
-const isObject = require('lodash.isobject');
+const transform = require("lodash.transform");
+const isEqual = require("lodash.isequal");
+const isObject = require("lodash.isobject");
 
 function difference(object, base) {
-	function changes(obj, base2) {
-		return transform(obj, function(result, value, key) {
-			if (!isEqual(value, base2[key])) {
-				result[key] = (isObject(value) && isObject(base2[key])) ? changes(value, base2[key]) : value;
-			}
-		});
-	}
-	return changes(object, base);
+  function changes(obj, base2) {
+    return transform(obj, function (result, value, key) {
+      if (!isEqual(value, base2[key])) {
+        result[key] = isObject(value) && isObject(base2[key]) ? changes(value, base2[key]) : value;
+      }
+    });
+  }
+  return changes(object, base);
 }
 
+manager.on("starboardEdited", (old, updated) => {
+  const diff = difference(old.options, updated.options);
 
-manager.on('starboardEdited', (old, updated) => {
+  const embed = new Discord.MessageEmbed()
+    .setTitle("Starboard edited !")
+    .setDescription("Here are the modified options");
 
-    const diff = difference(old.options, updated.options);
+  for (const element in diff) {
+    embed.addField(element, diff[element], true);
+  }
 
-    const embed = new Discord.MessageEmbed()
-        .setTitle('Starboard edited !')
-        .setDescription('Here are the modified options')
-    
-    for(const element in diff) {
-        embed.addField(element, diff[element], true);
-    }
-
-    const channel = client.channels.cache.get(updated.channelID);
-    if(channel) return channel.send(embed);
-
-})
+  const channel = client.channels.cache.get(updated.channelId);
+  if (channel) return channel.send(embed);
+});
 ```
 
 ### Translating the "Jump to the message" section
@@ -197,8 +221,8 @@ To translate "Jump to the message" you can use the `translateClickHere` option i
 
 ```js
 const manager = new StarboardsManager(client, {
-    storage: false,
-    translateClickHere: 'Cliquez ici pour accéder au message', // 🇫🇷 French !
+  storage: false,
+  translateClickHere: "Cliquez ici pour accéder au message", // 🇫🇷 French !
 });
 ```
 
@@ -214,7 +238,7 @@ const manager = new StarboardsManager(client, {
 ### Use a color gradient for the embed according to the number of stars
 
 The `color` option can be either a string or an object containing an array of colors and a maximum.
-This object must be of the form : 
+This object must be of the form :
 
 ```js
 color: {
