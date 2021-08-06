@@ -230,8 +230,8 @@ Or
 
 ```js
 const manager = new StarboardsManager(client, {
-  storage: false,
-  translateClickHere: (msg) => client.translate("starboardClickHere", message.guild.id), // Assuming the client.translate() function exists ;)
+    storage: false,
+    translateClickHere: (msg) => client.translate('starboardClickHere', msg.guild.id) // Assuming the client.translate() function exists ;)
 });
 ```
 
