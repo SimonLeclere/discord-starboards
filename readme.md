@@ -12,7 +12,7 @@ See the [project page](https://github.com/SimonLeclere/discord-starboards/projec
 - 🌐 Support for multiple starboards per server, and even per channels with a different emoji and different options!
 - ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, ect...)
 - 💥 Support for all languages using events !
-- 💪🏻 Parse images url and event tenor gifs url !
+- 💪🏻 Parse images url and even tenor gifs url !
 
 ## Description
 
