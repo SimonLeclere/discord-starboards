@@ -2,7 +2,7 @@
 
 Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allows you to easily create Starboards !
 
-See the [project page](https://github.com/SimonLeclere/discord-starboards/projects/1) for planned future additions. If you have an idea or a problem that is not in the project page, don't hesitate to open an issue :)
+If you have an idea or a problem, don't hesitate to open an issue :)
 
 ## Features
 
