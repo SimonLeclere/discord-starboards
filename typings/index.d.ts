@@ -57,7 +57,7 @@ declare module "discord-starboards" {
 		public starboards: Starboard[];
 
 		public create(
-			channel: DJS.Channel,
+			channel: DJS.TextChannel,
 			options?: Partial<StarboardDefaultCreateOptions>
 		): Promise<boolean>;
 
