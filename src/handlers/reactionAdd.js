@@ -45,9 +45,9 @@ module.exports = async (manager, emoji, message, user) => {
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color, count) || foundStar.color)
 			.setDescription(foundStar.description || '')
-			.setAuthor(message.author.tag, message.author.displayAvatarURL())
+			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 			.setTimestamp()
-			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${count} | ${message.id}`, footerUrl)
+			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${count} | ${message.id}`, iconURL: footerUrl })
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
@@ -105,9 +105,9 @@ module.exports = async (manager, emoji, message, user) => {
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
 			.setDescription(`${content}\n${image === 'attachment' ? '[attachment]\n' : ''}\n[${manager.options.translateClickHere(message)}](${message.url})`)
-			.setAuthor(message.author.tag, message.author.displayAvatarURL())
+			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 			.setTimestamp()
-			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
+			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, iconURL: footerUrl })
 			.setImage(image !== 'attachment' ? image : '');
 		starChannel.send({ embeds: [starEmbed] });
 		manager.emit('starboardReactionAdd', emoji, message, user);
