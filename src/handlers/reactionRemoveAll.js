@@ -20,9 +20,9 @@ module.exports = async (manager, message) => {
 			const starEmbed = new MessageEmbed()
 				.setColor(foundStar.color)
 				.setDescription(foundStar.description || '')
-				.setAuthor(message.author.tag, message.author.displayAvatarURL())
+				.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 				.setTimestamp()
-				.setFooter(`${data.options.emoji} 0 | ${message.id}`)
+				.setFooter({ text: `${data.options.emoji} 0 | ${message.id}` })
 				.setImage(image);
 			const starMsg = await starChannel.messages.fetch(starMessage.id);
 			await starMsg.edit({ embeds: [starEmbed] });
