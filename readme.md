@@ -2,7 +2,7 @@
 
 Discord Starboards is a powerful [Node.js](https://nodejs.org) module that allows you to easily create Starboards !
 
-See the [project page](https://github.com/SimonLeclere/discord-starboards/projects/1) for planned future additions. If you have an idea or a problem that is not in the project page, don't hesitate to open an issue :)
+If you have an idea or a problem, don't hesitate to open an issue :)
 
 ## Features
 
@@ -12,7 +12,7 @@ See the [project page](https://github.com/SimonLeclere/discord-starboards/projec
 - 🌐 Support for multiple starboards per server, and even per channels with a different emoji and different options!
 - ⚙️ Very customizable! (emoji, threshold, selfstat, botStars, ect...)
 - 💥 Support for all languages using events !
-- 💪🏻 Parse images url and event tenor gifs url !
+- 💪🏻 Parse images url and even tenor gifs url !
 
 ## Description
 
