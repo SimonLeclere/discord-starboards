@@ -43,7 +43,7 @@ module.exports = async (manager, emoji, message, user) => {
 		const count = reaction && reaction.count ? reaction.count : parseInt(stars[2]) + 1;
 
 		const starEmbed = new MessageEmbed()
-			.setColor(getColor(data.options.color, count) || foundStar.color)
+			.setColor(getColor(data.options.color, count, data.options.threshold) || foundStar.color)
 			.setDescription(foundStar.description || '')
 			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 			.setTimestamp()
@@ -123,11 +123,11 @@ function extension(attachment) {
 	return attachment;
 }
 
-function getColor(color, stars = 1) {
+function getColor(color, stars = 1, threshold) {
 	if(typeof color === 'string') return color;
 
 	else if (typeof color === 'object' && color.colors && color.max) {
-		const indice = Math.max(Math.min(Math.floor(stars - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
+		const indice = Math.max(Math.min(Math.floor((stars - threshold) - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
 		return color.colors[indice];
 	}
 
