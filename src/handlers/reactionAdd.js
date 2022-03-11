@@ -127,7 +127,7 @@ function getColor(color, stars = 1, threshold) {
 	if(typeof color === 'string') return color;
 
 	else if (typeof color === 'object' && color.colors && color.max) {
-		const indice = Math.max(Math.min(~~((stars - threshold) - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
+		const indice = Math.max(Math.min(~~((stars - threshold + 1) - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
 		return color.colors[indice];
 	}
 
