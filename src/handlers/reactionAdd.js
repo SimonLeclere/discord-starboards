@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageAttachment } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
 const cheerio = require('cheerio').default;
 
@@ -74,9 +74,8 @@ module.exports = async (manager, emoji, message, user) => {
 		if(message.cleanContent) content = message.cleanContent.length > 2000 ? message.cleanContent.slice(0, 2000) + '\n...' : message.cleanContent;
 		else content = embedContent ? embedContent : '';
 
-		let isAttachedImage = false;
+
 		let image = data.options.attachments ? (message.attachments.size > 0 ? await extension([...message.attachments.values()][0].url) : '') : '';
-		if (image) isAttachedImage = true;
 		if(image === '') image = embedImage ? embedImage.url ? embedImage.url : '' : '';
 		if(image === '' && data.options.resolveImageUrl) {
 			const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
@@ -108,25 +107,9 @@ module.exports = async (manager, emoji, message, user) => {
 			.setDescription(`${content}\n${image === 'attachment' ? '[attachment]\n' : ''}\n[${manager.options.translateClickHere(message)}](${message.url})`)
 			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 			.setTimestamp()
-			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, iconURL: footerUrl });
-
-		if (image) {
-			if (!isAttachedImage) {
-				starEmbed.setImage(image !== 'attachment' ? image : '');
-				starChannel.send({ embeds: [starEmbed] });
-			}
-			else {
-				const res = await axios.get(image, {
-					responseType: 'stream',
-				});
-				const ext = image.split(/[#?]/)[0].split('.').pop().trim();
-				const attach = new MessageAttachment(res.data, `image.${ext}`);
-				starEmbed
-					.setImage('attachment://image.${ext}');
-				starChannel.send({ embeds: [starEmbed], files: [attach] });
-			}
-		}
-
+			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, iconURL: footerUrl })
+			.setImage(image !== 'attachment' ? image : '');
+		starChannel.send({ embeds: [starEmbed] });
 		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
 
@@ -135,7 +118,7 @@ module.exports = async (manager, emoji, message, user) => {
 function extension(attachment) {
 	const imageLink = attachment.split('.');
 	const typeOfImage = imageLink[imageLink.length - 1];
-	const image = /(jpg|jpeg|png|gif|webp)/gi.test(typeOfImage);
+	const image = /(jpg|jpeg|png|gif)/gi.test(typeOfImage);
 	if (!image) return 'attachment';
 	return attachment;
 }
