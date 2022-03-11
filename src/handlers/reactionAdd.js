@@ -126,7 +126,6 @@ module.exports = async (manager, emoji, message, user) => {
 				starChannel.send({ embeds: [starEmbed], files: [attach] });
 			}
 		}
-		else starChannel.send({ embeds: [starEmbed] });
 
 		manager.emit('starboardReactionAdd', emoji, message, user);
 	}
