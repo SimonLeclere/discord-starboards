@@ -26,7 +26,7 @@ module.exports = async (manager, emoji, message, user) => {
 		const image = foundStar.image && foundStar.image.url || '';
 		const footerUrl = emoji.length > 5 ? `https://cdn.discordapp.com/emojis/${emoji}` : null;
 		const starEmbed = new MessageEmbed()
-			.setColor(getColor(data.options.color, parseInt(stars[2]) - 1) || foundStar.color)
+			.setColor(getColor(data.options.color, parseInt(stars[2]) - 1, data.options.threshold) || foundStar.color)
 			.setDescription(foundStar.description || '')
 			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
 			.setTimestamp()
@@ -47,11 +47,11 @@ module.exports = async (manager, emoji, message, user) => {
 
 };
 
-function getColor(color, stars = 1) {
+function getColor(color, stars = 1, threshold) {
 	if(typeof color === 'string') return color;
 
 	else if (typeof color === 'object' && color.colors && color.max) {
-		const indice = Math.max(Math.min(Math.floor(stars - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
+		const indice = Math.max(Math.min(~~((stars - threshold) - 1 / color.max * color.colors.length), color.colors.length - 1), 0);
 		return color.colors[indice];
 	}
 
