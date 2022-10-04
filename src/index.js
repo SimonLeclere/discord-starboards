@@ -59,7 +59,7 @@ class StarboardsManager extends EventEmitter {
 
 		this.client.on('channelDelete', channel => {
 			const channelData = this.starboards.find(data => data.channelId === channel.id);
-			if (channelData) return this.delete(channelData.channelId);
+			if (channelData) return this.delete(channelData.channelId, channelData.options.emoji);
 		});
 		this.client.on('raw', packet => handleRaw(this, packet));
 		this.client.on('messageDelete', message => handleMsgDelete(this, message));
@@ -96,7 +96,7 @@ class StarboardsManager extends EventEmitter {
 			threshold: typeof options.threshold === 'number' ? options.threshold : this.defaultsOptions.threshold,
 			color: options.color ? options.color : this.defaultsOptions.color,
 			allowNsfw: options.allowNsfw ? options.allowNsfw : this.defaultsOptions.allowNsfw,
-			ignoredChannels: options.ignoredChannels ? options.ignoredChannels : [],
+			ignoredChannels: options.ignoredChannels && Array.isArray(options.ignoredChannels) ? options.ignoredChannels : [],
 			handleMessageDelete: options.handleMessageDelete ? options.handleMessageDelete : false,
 		};
 	}
@@ -129,7 +129,7 @@ class StarboardsManager extends EventEmitter {
 	}
 
 	/**
-     * Delete a starboard by its guildId
+     * Delete a starboard by its channelId and its emoji
      * @param {Discord.Snowflake} guildId
 	 * @param {String} emoji
      * @example

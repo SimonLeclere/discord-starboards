@@ -28,9 +28,9 @@ module.exports = async (manager, emoji, message, user) => {
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color, parseInt(stars[2]) - 1) || foundStar.color)
 			.setDescription(foundStar.description || '')
-			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${parseInt(stars[2]) - 1} | ${message.id}`, iconURL: footerUrl })
+			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${parseInt(stars[2]) - 1} | ${message.id}`, footerUrl)
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function

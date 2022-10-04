@@ -22,4 +22,6 @@ exports.StarBoardCreateDefaultsOptions = {
 	threshold: 1,
 	color: '#f1c40f',
 	allowNsfw: false,
+	ignoredChannels: [],
+	handleMessageDelete: true,
 };

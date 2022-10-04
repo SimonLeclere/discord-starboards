@@ -52,7 +52,7 @@ The callback function is invoked with the emoji, the message and the user as arg
 
 ```js
 manager.on("starboardReactionRemove", (emoji, message, user) => {
-  console.log(`${user.username} remove his reaction (${emoji}) to a message (id: ${message.id}).`);
+  console.log(`${user.username} removed his reaction (${emoji}) to a message (id: ${message.id}).`);
 });
 ```
 
@@ -133,6 +133,7 @@ The callback function is invoked with the old starboard and the new starboard as
 
 ```js
 manager.on("starboardEdited", (oldStarboard, newStarboard) => {
-  message.channel.send(`Starboard (channel ${newStarboard.channelId}) edited !`);
+  const channel = client.channels.cache.get(newStarboard.channelId);
+  channel.send(`Starboard (channel ${newStarboard.channelId}) edited !`);
 });
 ```

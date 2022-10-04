@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
-const cheerio = require('cheerio').default;
+const cheerio = require('cheerio');
 
 module.exports = async (manager, emoji, message, user) => {
 
@@ -45,9 +45,9 @@ module.exports = async (manager, emoji, message, user) => {
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color, count) || foundStar.color)
 			.setDescription(foundStar.description || '')
-			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${count} | ${message.id}`, iconURL: footerUrl })
+			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${count} | ${message.id}`, footerUrl)
 			.setImage(image);
 		const starMsg = await starChannel.messages.fetch(starMessage.id);
 		// eslint-disable-next-line no-empty-function
@@ -105,12 +105,13 @@ module.exports = async (manager, emoji, message, user) => {
 		const starEmbed = new MessageEmbed()
 			.setColor(getColor(data.options.color))
 			.setDescription(`${content}\n${image === 'attachment' ? '[attachment]\n' : ''}\n[${manager.options.translateClickHere(message)}](${message.url})`)
-			.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+			.setAuthor(message.author.tag, message.author.displayAvatarURL())
 			.setTimestamp()
-			.setFooter({ text: `${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, iconURL: footerUrl })
+			.setFooter(`${emoji.length > 5 ? '' : data.options.emoji} ${reaction && reaction.count ? reaction.count : 1} | ${message.id}`, footerUrl)
 			.setImage(image !== 'attachment' ? image : '');
 		starChannel.send({ embeds: [starEmbed] });
 		manager.emit('starboardReactionAdd', emoji, message, user);
+
 	}
 
 };
